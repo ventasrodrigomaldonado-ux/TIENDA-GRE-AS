@@ -1,0 +1,2810 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+
+<meta charset="UTF-8">
+
+<meta
+  name="viewport"
+  content="width=device-width, initial-scale=1.0">
+
+<meta
+  name="theme-color"
+  content="#071a2d">
+
+<title>
+Tropic District | Administrador
+</title>
+
+<script
+  src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2">
+</script>
+
+
+<style>
+
+/* =========================================================
+   RESET
+========================================================= */
+
+*{
+  box-sizing:border-box;
+  margin:0;
+  padding:0;
+}
+
+body{
+
+  font-family:
+    Arial,
+    Helvetica,
+    sans-serif;
+
+  background:
+    #eef2f5;
+
+  color:#17202a;
+
+  min-height:100vh;
+
+}
+
+
+/* =========================================================
+   VARIABLES
+========================================================= */
+
+:root{
+
+  --azul:#0878d1;
+
+  --azul-oscuro:#071a2d;
+
+  --amarillo:#ffd21c;
+
+  --rojo:#ef3340;
+
+  --verde:#12a86b;
+
+  --rosa:#ff4fa3;
+
+  --gris:#68727d;
+
+  --blanco:#fff;
+
+  --borde:#dfe5e9;
+
+}
+
+
+/* =========================================================
+   LOGIN
+========================================================= */
+
+.login{
+
+  min-height:100vh;
+
+  display:flex;
+
+  align-items:center;
+
+  justify-content:center;
+
+  padding:20px;
+
+  background:
+    linear-gradient(
+      135deg,
+      #071a2d,
+      #0878d1,
+      #12a86b
+    );
+
+}
+
+.login-box{
+
+  width:100%;
+
+  max-width:430px;
+
+  background:white;
+
+  border-radius:22px;
+
+  padding:35px;
+
+  box-shadow:
+    0 25px 70px rgba(0,0,0,.3);
+
+  text-align:center;
+
+}
+
+.login-logo{
+
+  width:65px;
+
+  height:65px;
+
+  margin:0 auto 18px;
+
+  border-radius:16px;
+
+  background:
+    linear-gradient(
+      135deg,
+      var(--azul),
+      var(--verde)
+    );
+
+  color:white;
+
+  display:flex;
+
+  align-items:center;
+
+  justify-content:center;
+
+  font-size:23px;
+
+  font-weight:900;
+
+  box-shadow:
+    5px 5px 0 var(--amarillo);
+
+}
+
+.login-box h1{
+
+  font-size:27px;
+
+  margin-bottom:5px;
+
+}
+
+.login-box p{
+
+  color:var(--gris);
+
+  font-size:13px;
+
+  margin-bottom:25px;
+
+}
+
+.login-box input{
+
+  width:100%;
+
+  padding:14px;
+
+  border:
+    1px solid #ccd4da;
+
+  border-radius:10px;
+
+  margin-bottom:12px;
+
+  font-size:15px;
+
+  outline:none;
+
+}
+
+.login-box input:focus{
+
+  border-color:
+    var(--azul);
+
+}
+
+.btn-login{
+
+  width:100%;
+
+  padding:14px;
+
+  border:0;
+
+  border-radius:10px;
+
+  background:
+    var(--azul);
+
+  color:white;
+
+  font-weight:900;
+
+  font-size:15px;
+
+  cursor:pointer;
+
+}
+
+.btn-login:hover{
+
+  background:
+    var(--azul-oscuro);
+
+}
+
+.login-error{
+
+  display:none;
+
+  margin-top:15px;
+
+  background:#ffe7e9;
+
+  color:#b4232d;
+
+  padding:11px;
+
+  border-radius:9px;
+
+  font-size:13px;
+
+}
+
+
+/* =========================================================
+   ADMIN
+========================================================= */
+
+.admin{
+
+  display:none;
+
+  min-height:100vh;
+
+}
+
+
+/* =========================================================
+   HEADER
+========================================================= */
+
+.topbar{
+
+  background:
+    var(--azul-oscuro);
+
+  color:white;
+
+  padding:15px 20px;
+
+  display:flex;
+
+  justify-content:space-between;
+
+  align-items:center;
+
+  gap:20px;
+
+  position:sticky;
+
+  top:0;
+
+  z-index:1000;
+
+  border-bottom:
+    4px solid var(--amarillo);
+
+}
+
+.topbar-marca{
+
+  display:flex;
+
+  align-items:center;
+
+  gap:12px;
+
+}
+
+.logo-admin{
+
+  width:45px;
+
+  height:45px;
+
+  border-radius:11px;
+
+  background:
+    linear-gradient(
+      135deg,
+      var(--azul),
+      var(--verde)
+    );
+
+  display:flex;
+
+  align-items:center;
+
+  justify-content:center;
+
+  font-weight:900;
+
+  box-shadow:
+    4px 4px 0 var(--amarillo);
+
+}
+
+.topbar h1{
+
+  font-size:21px;
+
+}
+
+.topbar small{
+
+  color:#bcd0df;
+
+}
+
+.btn-logout{
+
+  border:
+    1px solid #ffffff55;
+
+  background:
+    transparent;
+
+  color:white;
+
+  padding:9px 14px;
+
+  border-radius:9px;
+
+  cursor:pointer;
+
+}
+
+
+/* =========================================================
+   CONTENEDOR
+========================================================= */
+
+.contenedor{
+
+  max-width:1200px;
+
+  margin:auto;
+
+  padding:25px 20px 60px;
+
+}
+
+
+/* =========================================================
+   ESTADISTICAS
+========================================================= */
+
+.stats{
+
+  display:grid;
+
+  grid-template-columns:
+    repeat(3,1fr);
+
+  gap:15px;
+
+  margin-bottom:25px;
+
+}
+
+.stat{
+
+  background:white;
+
+  padding:20px;
+
+  border-radius:15px;
+
+  border:
+    1px solid var(--borde);
+
+  box-shadow:
+    0 5px 18px rgba(0,0,0,.06);
+
+}
+
+.stat span{
+
+  display:block;
+
+  color:var(--gris);
+
+  font-size:12px;
+
+  margin-bottom:7px;
+
+}
+
+.stat strong{
+
+  font-size:27px;
+
+}
+
+
+/* =========================================================
+   ACCIONES
+========================================================= */
+
+.acciones{
+
+  display:flex;
+
+  justify-content:space-between;
+
+  align-items:center;
+
+  gap:15px;
+
+  margin-bottom:20px;
+
+}
+
+.btn-principal{
+
+  border:0;
+
+  background:
+    var(--azul);
+
+  color:white;
+
+  padding:13px 18px;
+
+  border-radius:10px;
+
+  font-weight:900;
+
+  cursor:pointer;
+
+}
+
+.btn-principal:hover{
+
+  background:
+    var(--azul-oscuro);
+
+}
+
+
+/* =========================================================
+   BUSQUEDA
+========================================================= */
+
+.busqueda{
+
+  width:100%;
+
+  padding:13px 15px;
+
+  border:
+    1px solid var(--borde);
+
+  border-radius:10px;
+
+  margin-bottom:20px;
+
+  font-size:14px;
+
+  outline:none;
+
+}
+
+.busqueda:focus{
+
+  border-color:
+    var(--azul);
+
+}
+
+
+/* =========================================================
+   LISTA
+========================================================= */
+
+.lista{
+
+  display:flex;
+
+  flex-direction:column;
+
+  gap:10px;
+
+}
+
+.item{
+
+  background:white;
+
+  border:
+    1px solid var(--borde);
+
+  border-radius:14px;
+
+  padding:13px;
+
+  display:flex;
+
+  align-items:center;
+
+  gap:15px;
+
+}
+
+.item-imagen{
+
+  width:80px;
+
+  height:80px;
+
+  object-fit:cover;
+
+  border-radius:10px;
+
+  background:#eef2f5;
+
+  flex-shrink:0;
+
+}
+
+.item-info{
+
+  flex:1;
+
+  min-width:0;
+
+}
+
+.item-info h3{
+
+  font-size:16px;
+
+  margin-bottom:4px;
+
+}
+
+.item-info p{
+
+  color:var(--gris);
+
+  font-size:12px;
+
+  margin:3px 0;
+
+}
+
+.item-precio{
+
+  font-weight:900;
+
+  font-size:17px;
+
+}
+
+.item-categoria{
+
+  display:inline-block;
+
+  background:
+    #eaf4fc;
+
+  color:
+    var(--azul);
+
+  padding:4px 8px;
+
+  border-radius:15px;
+
+  font-size:10px;
+
+  font-weight:900;
+
+  text-transform:uppercase;
+
+}
+
+.item-acciones{
+
+  display:flex;
+
+  flex-wrap:wrap;
+
+  gap:7px;
+
+}
+
+.btn-editar,
+.btn-estado,
+.btn-eliminar{
+
+  border:0;
+
+  padding:8px 10px;
+
+  border-radius:8px;
+
+  cursor:pointer;
+
+  font-weight:800;
+
+  font-size:11px;
+
+}
+
+.btn-editar{
+
+  background:
+    #e9f3fb;
+
+  color:
+    var(--azul);
+
+}
+
+.btn-estado{
+
+  background:
+    #e9f8f1;
+
+  color:
+    var(--verde);
+
+}
+
+.btn-estado.inactivo{
+
+  background:
+    #fff0f0;
+
+  color:
+    var(--rojo);
+
+}
+
+.btn-eliminar{
+
+  background:
+    #ffe8ea;
+
+  color:
+    var(--rojo);
+
+}
+
+
+/* =========================================================
+   MODAL
+========================================================= */
+
+.modal{
+
+  display:none;
+
+  position:fixed;
+
+  inset:0;
+
+  background:
+    rgba(0,0,0,.75);
+
+  z-index:3000;
+
+  padding:20px;
+
+  overflow:auto;
+
+}
+
+.modal-box{
+
+  max-width:650px;
+
+  margin:3% auto;
+
+  background:white;
+
+  border-radius:20px;
+
+  padding:28px;
+
+  position:relative;
+
+}
+
+.modal-header{
+
+  display:flex;
+
+  justify-content:space-between;
+
+  align-items:center;
+
+  margin-bottom:20px;
+
+}
+
+.modal-header h2{
+
+  font-size:24px;
+
+}
+
+.cerrar{
+
+  width:38px;
+
+  height:38px;
+
+  border:0;
+
+  border-radius:50%;
+
+  background:#eef2f5;
+
+  font-size:25px;
+
+  cursor:pointer;
+
+}
+
+
+/* =========================================================
+   FORMULARIO
+========================================================= */
+
+.form-grid{
+
+  display:grid;
+
+  grid-template-columns:
+    1fr 1fr;
+
+  gap:15px;
+
+}
+
+.campo{
+
+  display:flex;
+
+  flex-direction:column;
+
+}
+
+.campo.full{
+
+  grid-column:
+    1 / -1;
+
+}
+
+.campo label{
+
+  font-size:12px;
+
+  font-weight:900;
+
+  margin-bottom:6px;
+
+}
+
+.campo input,
+.campo select,
+.campo textarea{
+
+  width:100%;
+
+  padding:12px;
+
+  border:
+    1px solid #ccd4da;
+
+  border-radius:9px;
+
+  font-family:Arial;
+
+  outline:none;
+
+}
+
+.campo textarea{
+
+  min-height:90px;
+
+  resize:vertical;
+
+}
+
+.campo input:focus,
+.campo select:focus,
+.campo textarea:focus{
+
+  border-color:
+    var(--azul);
+
+}
+
+
+/* =========================================================
+   ACCESORIOS
+========================================================= */
+
+.accesorios-extra{
+
+  display:none;
+
+  margin-top:15px;
+
+  padding:15px;
+
+  background:
+    #fff2fa;
+
+  border:
+    1px solid #ffc4e3;
+
+  border-radius:12px;
+
+}
+
+.accesorios-extra h3{
+
+  color:
+    var(--rosa);
+
+  font-size:14px;
+
+  margin-bottom:12px;
+
+}
+
+
+/* =========================================================
+   FOTO
+========================================================= */
+
+.foto-area{
+
+  margin-top:18px;
+
+  border:
+    2px dashed #ccd4da;
+
+  border-radius:12px;
+
+  padding:15px;
+
+  text-align:center;
+
+}
+
+.foto-preview{
+
+  width:180px;
+
+  height:180px;
+
+  object-fit:cover;
+
+  border-radius:12px;
+
+  display:none;
+
+  margin:0 auto 12px;
+
+}
+
+.input-foto{
+
+  width:100%;
+
+}
+
+
+/* =========================================================
+   GUARDAR
+========================================================= */
+
+.btn-guardar{
+
+  width:100%;
+
+  margin-top:20px;
+
+  padding:15px;
+
+  border:0;
+
+  border-radius:10px;
+
+  background:
+    var(--verde);
+
+  color:white;
+
+  font-weight:900;
+
+  font-size:15px;
+
+  cursor:pointer;
+
+}
+
+.btn-guardar:hover{
+
+  background:
+    #0b8d59;
+
+}
+
+
+/* =========================================================
+   MENSAJE
+========================================================= */
+
+.toast{
+
+  position:fixed;
+
+  right:20px;
+
+  bottom:20px;
+
+  z-index:5000;
+
+  background:
+    var(--azul-oscuro);
+
+  color:white;
+
+  padding:14px 18px;
+
+  border-radius:10px;
+
+  box-shadow:
+    0 10px 30px rgba(0,0,0,.25);
+
+  display:none;
+
+  font-size:13px;
+
+}
+
+
+/* =========================================================
+   RESPONSIVE
+========================================================= */
+
+@media(max-width:700px){
+
+  .topbar{
+
+    padding:
+      12px 15px;
+
+  }
+
+  .topbar h1{
+
+    font-size:17px;
+
+  }
+
+  .stats{
+
+    grid-template-columns:
+      1fr;
+
+  }
+
+  .acciones{
+
+    align-items:
+      stretch;
+
+  }
+
+  .item{
+
+    align-items:
+      flex-start;
+
+  }
+
+  .item-imagen{
+
+    width:65px;
+
+    height:65px;
+
+  }
+
+  .item-acciones{
+
+    flex-direction:
+      column;
+
+  }
+
+  .form-grid{
+
+    grid-template-columns:
+      1fr;
+
+  }
+
+  .campo.full{
+
+    grid-column:
+      auto;
+
+  }
+
+  .modal-box{
+
+    margin:
+      0 auto;
+
+    padding:20px;
+
+  }
+
+}
+
+</style>
+
+</head>
+
+
+<body>
+
+
+<!-- =====================================================
+     LOGIN
+===================================================== -->
+
+<section
+  class="login"
+  id="login">
+
+  <div class="login-box">
+
+    <div class="login-logo">
+      TD
+    </div>
+
+    <h1>
+      TROPIC DISTRICT
+    </h1>
+
+    <p>
+      Panel de administración
+    </p>
+
+
+    <form
+      onsubmit="iniciarSesion(event)">
+
+      <input
+        type="email"
+        id="email"
+        required
+        placeholder="Correo electrónico">
+
+
+      <input
+        type="password"
+        id="password"
+        required
+        placeholder="Contraseña">
+
+
+      <button
+        class="btn-login"
+        type="submit">
+
+        ENTRAR AL ADMINISTRADOR
+
+      </button>
+
+    </form>
+
+
+    <div
+      class="login-error"
+      id="loginError">
+
+    </div>
+
+  </div>
+
+</section>
+
+
+<!-- =====================================================
+     ADMIN
+===================================================== -->
+
+<section
+  class="admin"
+  id="admin">
+
+
+  <!-- HEADER -->
+
+  <header class="topbar">
+
+    <div class="topbar-marca">
+
+      <div class="logo-admin">
+        TD
+      </div>
+
+      <div>
+
+        <h1>
+          TROPIC DISTRICT
+        </h1>
+
+        <small>
+          Administración de tienda
+        </small>
+
+      </div>
+
+    </div>
+
+
+    <button
+      class="btn-logout"
+      onclick="cerrarSesion()">
+
+      Cerrar sesión
+
+    </button>
+
+  </header>
+
+
+  <!-- CONTENIDO -->
+
+  <main class="contenedor">
+
+
+    <!-- ESTADISTICAS -->
+
+    <div class="stats">
+
+      <div class="stat">
+
+        <span>
+          Productos
+        </span>
+
+        <strong id="totalProductos">
+          0
+        </strong>
+
+      </div>
+
+
+      <div class="stat">
+
+        <span>
+          Activos
+        </span>
+
+        <strong id="productosActivos">
+          0
+        </strong>
+
+      </div>
+
+
+      <div class="stat">
+
+        <span>
+          Categorías
+        </span>
+
+        <strong id="totalCategorias">
+          0
+        </strong>
+
+      </div>
+
+    </div>
+
+
+    <!-- ACCIONES -->
+
+    <div class="acciones">
+
+      <button
+        class="btn-principal"
+        onclick="abrirNuevoProducto()">
+
+        + AGREGAR PRODUCTO
+
+      </button>
+
+    </div>
+
+
+    <!-- BUSCAR -->
+
+    <input
+      class="busqueda"
+      id="busqueda"
+      type="search"
+      placeholder="Buscar producto, marca o categoría..."
+      oninput="filtrarProductos()">
+
+
+    <!-- LISTA -->
+
+    <div
+      class="lista"
+      id="listaProductos">
+
+    </div>
+
+  </main>
+
+</section>
+
+
+<!-- =====================================================
+     MODAL PRODUCTO
+===================================================== -->
+
+<div
+  class="modal"
+  id="modalProducto">
+
+  <div class="modal-box">
+
+
+    <div class="modal-header">
+
+      <h2 id="modalTitulo">
+        Nuevo producto
+      </h2>
+
+      <button
+        class="cerrar"
+        onclick="cerrarModal()">
+
+        &times;
+
+      </button>
+
+    </div>
+
+
+    <form
+      onsubmit="guardarProducto(event)"
+      id="formProducto">
+
+
+      <div class="form-grid">
+
+
+        <!-- NOMBRE -->
+
+        <div class="campo">
+
+          <label>
+            Nombre del producto
+          </label>
+
+          <input
+            type="text"
+            id="nombre"
+            required
+            placeholder="Ej. Air Street">
+
+        </div>
+
+
+        <!-- MARCA -->
+
+        <div class="campo">
+
+          <label>
+            Marca
+          </label>
+
+          <input
+            type="text"
+            id="marca"
+            placeholder="Nike, Adidas, Reebok...">
+
+        </div>
+
+
+        <!-- CATEGORIA -->
+
+        <div class="campo">
+
+          <label>
+            Categoría
+          </label>
+
+          <select
+            id="categoria"
+            onchange="cambiarCategoria()"
+            required>
+
+            <option value="">
+              Seleccionar categoría
+            </option>
+
+            <option value="Sneakers">
+              Sneakers
+            </option>
+
+            <option value="T-Shirts">
+              T-Shirts
+            </option>
+
+            <option value="Caps">
+              Caps
+            </option>
+
+            <option value="Bags">
+              Bags
+            </option>
+
+            <option value="Accessories">
+              Accessories
+            </option>
+
+            <option value="Featured">
+              Featured
+            </option>
+
+            <option value="New Arrivals">
+              New Arrivals
+            </option>
+
+          </select>
+
+        </div>
+
+
+        <!-- PRECIO -->
+
+        <div class="campo">
+
+          <label>
+            Precio
+          </label>
+
+          <input
+            type="number"
+            id="precio"
+            min="0"
+            step="1"
+            required
+            placeholder="$">
+
+        </div>
+
+
+        <!-- DESCRIPCION -->
+
+        <div class="campo full">
+
+          <label>
+            Descripción
+          </label>
+
+          <textarea
+            id="descripcion"
+            placeholder="Descripción del producto...">
+          </textarea>
+
+        </div>
+
+
+      </div>
+
+
+      <!-- ACCESORIOS -->
+
+      <div
+        class="accesorios-extra"
+        id="accesoriosExtra">
+
+        <h3>
+          ACCESSORIES
+        </h3>
+
+
+        <div class="form-grid">
+
+
+          <div class="campo">
+
+            <label>
+              Tipo
+            </label>
+
+            <select
+              id="tipo">
+
+              <option value="">
+                Seleccionar
+              </option>
+
+              <option>
+                Aretes
+              </option>
+
+              <option>
+                Dije
+              </option>
+
+              <option>
+                Pin
+              </option>
+
+              <option>
+                Pulsera
+              </option>
+
+              <option>
+                Collar
+              </option>
+
+              <option>
+                Anillo
+              </option>
+
+              <option>
+                Charm
+              </option>
+
+              <option>
+                Otro
+              </option>
+
+            </select>
+
+          </div>
+
+
+          <div class="campo">
+
+            <label>
+              Material
+            </label>
+
+            <input
+              type="text"
+              id="material"
+              placeholder="Acero inoxidable, metal...">
+
+          </div>
+
+
+        </div>
+
+      </div>
+
+
+      <!-- FOTO -->
+
+      <div class="foto-area">
+
+        <img
+          id="fotoPreview"
+          class="foto-preview"
+          alt="Vista previa">
+
+
+        <label>
+
+          <strong>
+            FOTO DEL PRODUCTO
+          </strong>
+
+          <br><br>
+
+          Selecciona una foto desde
+          tu celular o computadora.
+
+        </label>
+
+
+        <br><br>
+
+
+        <input
+          class="input-foto"
+          type="file"
+          id="foto"
+          accept="image/*"
+          onchange="previsualizarFoto()">
+
+      </div>
+
+
+      <!-- GUARDAR -->
+
+      <button
+        class="btn-guardar"
+        type="submit">
+
+        GUARDAR PRODUCTO
+
+      </button>
+
+
+    </form>
+
+  </div>
+
+</div>
+
+
+<!-- =====================================================
+     TOAST
+===================================================== -->
+
+<div
+  class="toast"
+  id="toast">
+
+</div>
+
+
+<script>
+
+
+/* =========================================================
+   SUPABASE
+========================================================= */
+
+/*
+  IMPORTANTE:
+
+  AQUÍ PONDREMOS DESPUÉS LAS CREDENCIALES
+  EXCLUSIVAS DE TROPIC DISTRICT.
+
+  NO UTILIZAR LAS DE RUSTI-K.
+*/
+
+const SUPABASE_URL =
+  "";
+
+const SUPABASE_ANON_KEY =
+  "";
+
+
+let supabaseClient = null;
+
+
+if(
+  SUPABASE_URL &&
+  SUPABASE_ANON_KEY
+){
+
+  supabaseClient =
+    window.supabase.createClient(
+      SUPABASE_URL,
+      SUPABASE_ANON_KEY
+    );
+
+}
+
+
+/* =========================================================
+   VARIABLES
+========================================================= */
+
+let productos = [];
+
+let productoEditando = null;
+
+
+/* =========================================================
+   LOGIN
+========================================================= */
+
+async function iniciarSesion(e){
+
+  e.preventDefault();
+
+
+  if(!supabaseClient){
+
+    mostrarErrorLogin(
+      "Primero debemos conectar la base de datos de Tropic District."
+    );
+
+    return;
+
+  }
+
+
+  const email =
+    document.getElementById(
+      "email"
+    ).value.trim();
+
+
+  const password =
+    document.getElementById(
+      "password"
+    ).value;
+
+
+  const {
+    error
+  } =
+    await supabaseClient
+      .auth
+      .signInWithPassword({
+
+        email,
+        password
+
+      });
+
+
+  if(error){
+
+    mostrarErrorLogin(
+      error.message
+    );
+
+    return;
+
+  }
+
+
+  mostrarAdmin();
+
+}
+
+
+/* =========================================================
+   ERROR LOGIN
+========================================================= */
+
+function mostrarErrorLogin(
+  mensaje
+){
+
+  const caja =
+    document.getElementById(
+      "loginError"
+    );
+
+
+  caja.textContent =
+    mensaje;
+
+
+  caja.style.display =
+    "block";
+
+}
+
+
+/* =========================================================
+   MOSTRAR ADMIN
+========================================================= */
+
+function mostrarAdmin(){
+
+  document.getElementById(
+    "login"
+  ).style.display =
+    "none";
+
+
+  document.getElementById(
+    "admin"
+  ).style.display =
+    "block";
+
+
+  cargarProductos();
+
+}
+
+
+/* =========================================================
+   CERRAR SESION
+========================================================= */
+
+async function cerrarSesion(){
+
+  if(supabaseClient){
+
+    await supabaseClient
+      .auth
+      .signOut();
+
+  }
+
+
+  location.reload();
+
+}
+
+
+/* =========================================================
+   COMPROBAR SESION
+========================================================= */
+
+async function comprobarSesion(){
+
+  if(!supabaseClient){
+
+    return;
+
+  }
+
+
+  const {
+    data
+  } =
+    await supabaseClient
+      .auth
+      .getSession();
+
+
+  if(
+    data &&
+    data.session
+  ){
+
+    mostrarAdmin();
+
+  }
+
+}
+
+
+/* =========================================================
+   CARGAR PRODUCTOS
+========================================================= */
+
+async function cargarProductos(){
+
+  if(!supabaseClient){
+
+    return;
+
+  }
+
+
+  const {
+    data,
+    error
+  } =
+    await supabaseClient
+      .from(
+        "tropic_products"
+      )
+      .select("*")
+      .order(
+        "id",
+        {
+          ascending:true
+        }
+      );
+
+
+  if(error){
+
+    mostrarToast(
+      "Error cargando productos."
+    );
+
+    console.error(
+      error
+    );
+
+    return;
+
+  }
+
+
+  productos =
+    data || [];
+
+
+  mostrarLista();
+
+  actualizarEstadisticas();
+
+}
+
+
+/* =========================================================
+   LISTA
+========================================================= */
+
+function mostrarLista(
+  lista = productos
+){
+
+  const contenedor =
+    document.getElementById(
+      "listaProductos"
+    );
+
+
+  contenedor.innerHTML =
+    "";
+
+
+  if(!lista.length){
+
+    contenedor.innerHTML = `
+
+      <div class="item">
+
+        <div class="item-info">
+
+          <h3>
+            No hay productos todavía
+          </h3>
+
+          <p>
+            Agrega tu primer producto.
+          </p>
+
+        </div>
+
+      </div>
+
+    `;
+
+    return;
+
+  }
+
+
+  lista.forEach(
+    producto => {
+
+      const div =
+        document.createElement(
+          "div"
+        );
+
+
+      div.className =
+        "item";
+
+
+      const imagen =
+        producto.imagen ||
+        "";
+
+
+      div.innerHTML = `
+
+        ${
+          imagen
+          ?
+          `<img
+            class="item-imagen"
+            src="${imagen}"
+            alt="${producto.nombre || ""}">`
+          :
+          `<div
+            class="item-imagen">
+          </div>`
+        }
+
+
+        <div class="item-info">
+
+          <span class="item-categoria">
+
+            ${producto.categoria || ""}
+
+          </span>
+
+
+          <h3>
+
+            ${producto.nombre || ""}
+
+          </h3>
+
+
+          <p>
+
+            ${producto.marca || ""}
+
+          </p>
+
+
+          <div class="item-precio">
+
+            $${Number(
+              producto.precio || 0
+            ).toLocaleString()}
+            MXN
+
+          </div>
+
+        </div>
+
+
+        <div class="item-acciones">
+
+          <button
+            class="btn-editar"
+            onclick="editarProducto(${producto.id})">
+
+            EDITAR
+
+          </button>
+
+
+          <button
+            class="btn-estado ${
+              producto.activo
+              ? ""
+              : "inactivo"
+            }"
+            onclick="cambiarEstado(${producto.id},${producto.activo})">
+
+            ${
+              producto.activo
+              ?
+              "DESACTIVAR"
+              :
+              "ACTIVAR"
+            }
+
+          </button>
+
+
+          <button
+            class="btn-eliminar"
+            onclick="eliminarProducto(${producto.id})">
+
+            ELIMINAR
+
+          </button>
+
+        </div>
+
+      `;
+
+
+      contenedor.appendChild(
+        div
+      );
+
+    }
+  );
+
+}
+
+
+/* =========================================================
+   ESTADISTICAS
+========================================================= */
+
+function actualizarEstadisticas(){
+
+  document.getElementById(
+    "totalProductos"
+  ).textContent =
+    productos.length;
+
+
+  document.getElementById(
+    "productosActivos"
+  ).textContent =
+    productos.filter(
+      p =>
+        p.activo
+    ).length;
+
+
+  const categorias =
+    new Set(
+      productos
+        .map(
+          p =>
+            p.categoria
+        )
+        .filter(Boolean)
+    );
+
+
+  document.getElementById(
+    "totalCategorias"
+  ).textContent =
+    categorias.size;
+
+}
+
+
+/* =========================================================
+   BUSCAR
+========================================================= */
+
+function filtrarProductos(){
+
+  const texto =
+    document.getElementById(
+      "busqueda"
+    ).value
+      .toLowerCase()
+      .trim();
+
+
+  if(!texto){
+
+    mostrarLista();
+
+    return;
+
+  }
+
+
+  const filtrados =
+    productos.filter(
+      p =>
+
+        String(
+          p.nombre || ""
+        )
+        .toLowerCase()
+        .includes(texto)
+
+        ||
+
+        String(
+          p.marca || ""
+        )
+        .toLowerCase()
+        .includes(texto)
+
+        ||
+
+        String(
+          p.categoria || ""
+        )
+        .toLowerCase()
+        .includes(texto)
+
+    );
+
+
+  mostrarLista(
+    filtrados
+  );
+
+}
+
+
+/* =========================================================
+   NUEVO PRODUCTO
+========================================================= */
+
+function abrirNuevoProducto(){
+
+  productoEditando =
+    null;
+
+
+  document.getElementById(
+    "modalTitulo"
+  ).textContent =
+    "Nuevo producto";
+
+
+  document.getElementById(
+    "formProducto"
+  ).reset();
+
+
+  document.getElementById(
+    "fotoPreview"
+  ).style.display =
+    "none";
+
+
+  document.getElementById(
+    "fotoPreview"
+  ).src =
+    "";
+
+
+  cambiarCategoria();
+
+
+  document.getElementById(
+    "modalProducto"
+  ).style.display =
+    "block";
+
+}
+
+
+/* =========================================================
+   EDITAR PRODUCTO
+========================================================= */
+
+function editarProducto(
+  id
+){
+
+  const producto =
+    productos.find(
+      p =>
+        Number(p.id) ===
+        Number(id)
+    );
+
+
+  if(!producto){
+
+    return;
+
+  }
+
+
+  productoEditando =
+    producto;
+
+
+  document.getElementById(
+    "modalTitulo"
+  ).textContent =
+    "Editar producto";
+
+
+  document.getElementById(
+    "nombre"
+  ).value =
+    producto.nombre ||
+    "";
+
+
+  document.getElementById(
+    "marca"
+  ).value =
+    producto.marca ||
+    "";
+
+
+  document.getElementById(
+    "categoria"
+  ).value =
+    producto.categoria ||
+    "";
+
+
+  document.getElementById(
+    "precio"
+  ).value =
+    producto.precio ||
+    "";
+
+
+  document.getElementById(
+    "descripcion"
+  ).value =
+    producto.descripcion ||
+    "";
+
+
+  document.getElementById(
+    "tipo"
+  ).value =
+    producto.tipo ||
+    "";
+
+
+  document.getElementById(
+    "material"
+  ).value =
+    producto.material ||
+    "";
+
+
+  if(producto.imagen){
+
+    document.getElementById(
+      "fotoPreview"
+    ).src =
+      producto.imagen;
+
+
+    document.getElementById(
+      "fotoPreview"
+    ).style.display =
+      "block";
+
+  }
+
+
+  cambiarCategoria();
+
+
+  document.getElementById(
+    "modalProducto"
+  ).style.display =
+    "block";
+
+}
+
+
+/* =========================================================
+   CATEGORIA
+========================================================= */
+
+function cambiarCategoria(){
+
+  const categoria =
+    document.getElementById(
+      "categoria"
+    ).value;
+
+
+  const extras =
+    document.getElementById(
+      "accesoriosExtra"
+    );
+
+
+  if(
+    categoria ===
+    "Accessories"
+  ){
+
+    extras.style.display =
+      "block";
+
+  }else{
+
+    extras.style.display =
+      "none";
+
+  }
+
+}
+
+
+/* =========================================================
+   PREVISUALIZAR FOTO
+========================================================= */
+
+function previsualizarFoto(){
+
+  const archivo =
+    document.getElementById(
+      "foto"
+    ).files[0];
+
+
+  if(!archivo){
+
+    return;
+
+  }
+
+
+  const url =
+    URL.createObjectURL(
+      archivo
+    );
+
+
+  const preview =
+    document.getElementById(
+      "fotoPreview"
+    );
+
+
+  preview.src =
+    url;
+
+
+  preview.style.display =
+    "block";
+
+}
+
+
+/* =========================================================
+   SUBIR IMAGEN
+========================================================= */
+
+async function subirImagen(
+  archivo
+){
+
+  if(!archivo){
+
+    return null;
+
+  }
+
+
+  const extension =
+    archivo.name
+      .split(".")
+      .pop()
+      .toLowerCase();
+
+
+  const nombreSeguro =
+
+    "producto-" +
+
+    Date.now() +
+
+    "-" +
+
+    Math.random()
+      .toString(36)
+      .substring(2,8) +
+
+    "." +
+
+    extension;
+
+
+  const ruta =
+    nombreSeguro;
+
+
+  const {
+    error
+  } =
+    await supabaseClient
+      .storage
+      .from(
+        "tropic-products"
+      )
+      .upload(
+        ruta,
+        archivo,
+        {
+
+          cacheControl:
+            "3600",
+
+          upsert:false
+
+        }
+      );
+
+
+  if(error){
+
+    throw error;
+
+  }
+
+
+  const {
+    data
+  } =
+    supabaseClient
+      .storage
+      .from(
+        "tropic-products"
+      )
+      .getPublicUrl(
+        ruta
+      );
+
+
+  return data.publicUrl;
+
+}
+
+
+/* =========================================================
+   GUARDAR PRODUCTO
+========================================================= */
+
+async function guardarProducto(
+  e
+){
+
+  e.preventDefault();
+
+
+  if(!supabaseClient){
+
+    mostrarToast(
+      "Primero debemos conectar Supabase."
+    );
+
+    return;
+
+  }
+
+
+  const nombre =
+    document.getElementById(
+      "nombre"
+    ).value.trim();
+
+
+  const marca =
+    document.getElementById(
+      "marca"
+    ).value.trim();
+
+
+  const categoria =
+    document.getElementById(
+      "categoria"
+    ).value;
+
+
+  const precio =
+    Number(
+      document.getElementById(
+        "precio"
+      ).value
+    );
+
+
+  const descripcion =
+    document.getElementById(
+      "descripcion"
+    ).value.trim();
+
+
+  const tipo =
+    document.getElementById(
+      "tipo"
+    ).value;
+
+
+  const material =
+    document.getElementById(
+      "material"
+    ).value.trim();
+
+
+  const archivo =
+    document.getElementById(
+      "foto"
+    ).files[0];
+
+
+  let imagen =
+    productoEditando
+      ? productoEditando.imagen || null
+      : null;
+
+
+  try{
+
+
+    if(archivo){
+
+      imagen =
+        await subirImagen(
+          archivo
+        );
+
+    }
+
+
+    const datos = {
+
+      nombre,
+
+      marca,
+
+      categoria,
+
+      precio,
+
+      descripcion,
+
+      imagen,
+
+      tipo:
+        categoria ===
+        "Accessories"
+        ? tipo
+        : null,
+
+      material:
+        categoria ===
+        "Accessories"
+        ? material
+        : null,
+
+      activo:
+        productoEditando
+        ? productoEditando.activo
+        : true
+
+    };
+
+
+    if(productoEditando){
+
+      const {
+        error
+      } =
+        await supabaseClient
+          .from(
+            "tropic_products"
+          )
+          .update(
+            datos
+          )
+          .eq(
+            "id",
+            productoEditando.id
+          );
+
+
+      if(error){
+
+        throw error;
+
+      }
+
+
+      mostrarToast(
+        "Producto actualizado ✓"
+      );
+
+    }else{
+
+      const {
+        error
+      } =
+        await supabaseClient
+          .from(
+            "tropic_products"
+          )
+          .insert(
+            [datos]
+          );
+
+
+      if(error){
+
+        throw error;
+
+      }
+
+
+      mostrarToast(
+        "Producto agregado ✓"
+      );
+
+    }
+
+
+    cerrarModal();
+
+    cargarProductos();
+
+
+  }
+  catch(error){
+
+    console.error(
+      error
+    );
+
+
+    mostrarToast(
+      "No se pudo guardar el producto."
+    );
+
+  }
+
+}
+
+
+/* =========================================================
+   CAMBIAR ESTADO
+========================================================= */
+
+async function cambiarEstado(
+  id,
+  estadoActual
+){
+
+  if(!supabaseClient){
+
+    return;
+
+  }
+
+
+  const {
+    error
+  } =
+    await supabaseClient
+      .from(
+        "tropic_products"
+      )
+      .update({
+
+        activo:
+          !estadoActual
+
+      })
+      .eq(
+        "id",
+        id
+      );
+
+
+  if(error){
+
+    mostrarToast(
+      "No se pudo cambiar el estado."
+    );
+
+    return;
+
+  }
+
+
+  mostrarToast(
+    estadoActual
+    ?
+    "Producto desactivado"
+    :
+    "Producto activado"
+  );
+
+
+  cargarProductos();
+
+}
+
+
+/* =========================================================
+   ELIMINAR
+========================================================= */
+
+async function eliminarProducto(
+  id
+){
+
+  if(
+    !confirm(
+      "¿Seguro que deseas eliminar este producto?"
+    )
+  ){
+
+    return;
+
+  }
+
+
+  if(!supabaseClient){
+
+    return;
+
+  }
+
+
+  const {
+    error
+  } =
+    await supabaseClient
+      .from(
+        "tropic_products"
+      )
+      .delete()
+      .eq(
+        "id",
+        id
+      );
+
+
+  if(error){
+
+    mostrarToast(
+      "No se pudo eliminar."
+    );
+
+    return;
+
+  }
+
+
+  mostrarToast(
+    "Producto eliminado"
+  );
+
+
+  cargarProductos();
+
+}
+
+
+/* =========================================================
+   CERRAR MODAL
+========================================================= */
+
+function cerrarModal(){
+
+  document.getElementById(
+    "modalProducto"
+  ).style.display =
+    "none";
+
+
+  productoEditando =
+    null;
+
+}
+
+
+/* =========================================================
+   TOAST
+========================================================= */
+
+function mostrarToast(
+  mensaje
+){
+
+  const toast =
+    document.getElementById(
+      "toast"
+    );
+
+
+  toast.textContent =
+    mensaje;
+
+
+  toast.style.display =
+    "block";
+
+
+  setTimeout(
+    () => {
+
+      toast.style.display =
+        "none";
+
+    },
+    2500
+  );
+
+}
+
+
+/* =========================================================
+   INICIAR
+========================================================= */
+
+comprobarSesion();
+
+</script>
+
+</body>
+</html>
