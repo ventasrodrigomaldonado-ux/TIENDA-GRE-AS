@@ -39,6 +39,32 @@ footer{padding:35px 6%;background:#030a11;text-align:center;border-top:1px solid
 @media(max-width:1050px){.colecciones{grid-template-columns:repeat(2,minmax(0,1fr))}.category-card:last-child{grid-column:1/-1;min-height:420px}.productos{grid-template-columns:repeat(3,minmax(0,1fr))}.nav-principal{gap:13px}.nav-principal a{font-size:10px}}
 @media(max-width:760px){.header-contenido{padding:12px 5%;gap:10px;flex-wrap:wrap}.logo-texto{width:42px;height:42px}.marca{gap:10px}.marca h1{font-size:16px}.marca p{font-size:8px;letter-spacing:1px}.nav-principal{order:3;width:100%;justify-content:center;padding-top:9px;border-top:1px solid rgba(255,255,255,.08)}.btn-carrito{padding:10px 13px;font-size:10px}.hero{min-height:78vh;padding:80px 7%;background-attachment:scroll}.hero::before{inset:10px;border-radius:24px}.hero h2{letter-spacing:-1px}.hero-eyebrow{letter-spacing:2px;font-size:9px}.section,.catalogo{padding:70px 5%}.colecciones{grid-template-columns:1fr;gap:17px}.category-card,.category-card:last-child{grid-column:auto;min-height:430px;padding:27px}.section-heading{margin-bottom:32px}.catalogo-top{display:block}.catalogo-top .section-heading{margin-bottom:25px}.productos{grid-template-columns:repeat(2,minmax(0,1fr));gap:13px}.producto{border-radius:17px}.producto-foto{height:190px}.producto-info{padding:14px}.producto-info h3{font-size:13px}.producto-info p{font-size:11px;min-height:37px}.producto-precio{font-size:16px;margin:13px 0}.btn-ordenar{padding:11px 7px;font-size:9px}.accesorio{grid-template-columns:72px 1fr;gap:13px;padding:13px}.accesorio-foto{width:72px;height:72px;grid-row:span 2}.accesorio-info h3{font-size:13px}.accesorio-info p{font-size:11px}.accesorio-precio{grid-column:2;font-size:16px}.accesorio-ordenar{grid-column:1/-1}.detalle{grid-template-columns:1fr}.detalle>img{height:280px;min-height:0}.detalle-info{padding:25px}.detalle-info h2{font-size:28px}.modal{padding:12px}.checkout-box{padding:23px}.brand{padding:70px 6%}}
 @media(max-width:390px){.productos{grid-template-columns:1fr}.producto-foto{height:260px}.hero h2{font-size:49px}.nav-principal{gap:10px}.nav-principal a{letter-spacing:.4px}}
+```css
+.logo-portada {
+  display: block;
+  width: min(440px, 80vw);
+  max-height: 55vh;
+  height: auto;
+  object-fit: contain;
+  margin: 0 auto;
+  filter: drop-shadow(0 8px 24px rgba(0, 0, 0, 0.45));
+}
+
+.hero-contenido {
+  width: 100%;
+  max-width: 1050px;
+  position: relative;
+  z-index: 1;
+}
+
+@media (max-width: 760px) {
+  .logo-portada {
+    width: min(330px, 82vw);
+    max-height: 45vh;
+  }
+}
+```
+
 </style>
 
 </head>
@@ -61,18 +87,19 @@ footer{padding:35px 6%;background:#030a11;text-align:center;border-top:1px solid
   </div>
 </header>
 
-<section class="hero">
+```html
+<section class="hero" aria-label="Portada Tropic District">
   <div class="hero-contenido">
-    <div class="hero-eyebrow">Streetwear · Sneakers · Lifestyle</div>
-    <h2>STREET MEETS<br><span>TROPICAL.</span></h2>
-    <p>Estilo urbano con actitud propia. Descubre sneakers, ropa y accesorios seleccionados para moverte a tu manera.</p>
-    <span class="hero-frase">MOVE YOUR WAY</span>
-    <div class="hero-cta">
-      <a class="btn btn-amarillo" href="#colecciones">Explorar colecciones <span>↗</span></a>
-      <a class="btn btn-transparente" href="#catalogo">Ver catálogo</a>
-    </div>
+    <img
+      src="./images/logo.png"
+      alt="Tropic District"
+      class="logo-portada"
+      onerror="this.style.display='none'"
+    >
   </div>
 </section>
+```
+
 
 <section class="section" id="colecciones">
   <div class="section-heading">
