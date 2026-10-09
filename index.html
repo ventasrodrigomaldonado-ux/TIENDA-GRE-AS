@@ -1876,1321 +1876,519 @@ footer p{
 
 
 <script>
-
-
 /* =========================================================
-   CONFIGURACIÓN
+   CONFIGURACIÓN TROPIC DISTRICT + SUPABASE
 ========================================================= */
 
-const WHATSAPP =
-  "523221340289";
-
+const SUPABASE_URL = "https://kieedhsfjlaseyfhckdd.supabase.co";
+const SUPABASE_ANON_KEY = "sb_publishable_Cssg1pWMHqDVUhZdczsA9g_bbs8nbUK";
+const WHATSAPP = "523221340289";
+const TABLA_PRODUCTOS = "tropic_products";
 
 /* =========================================================
    VARIABLES
 ========================================================= */
 
 let productos = [];
-
 let carrito = [];
-
 let productoActual = null;
 
-
 /* =========================================================
-   ESCAPAR HTML
+   UTILIDADES
 ========================================================= */
 
-function escaparHTML(valor){
-
+function escaparHTML(valor) {
   return String(valor ?? "")
-    .replace(/&/g,"&amp;")
-    .replace(/</g,"&lt;")
-    .replace(/>/g,"&gt;")
-    .replace(/"/g,"&quot;")
-    .replace(/'/g,"&#039;");
-
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#039;");
 }
 
+function escaparAtributo(valor) {
+  return escaparHTML(valor);
+}
+
+function formatoPrecio(valor) {
+  return Number(valor || 0).toLocaleString("es-MX", {
+    maximumFractionDigits: 2
+  });
+}
+
+function esAccesorio(producto) {
+  return String(producto.categoria || "").trim().toLowerCase() === "accesorios";
+}
+
+/* Convierte los nombres de columnas de Supabase al formato usado por la tienda. */
+function adaptarProducto(registro) {
+  return {
+    id: String(registro.id),
+    nombre: registro.name || "Producto",
+    marca: registro.brand || "",
+    categoria: registro.category || "Tenis para hombre",
+    precio: Number(registro.price || 0),
+    descripcion: registro.description || "",
+    imagen: registro.image_url || "",
+    image_path: registro.image_path || "",
+    tipo: registro.accessory_type || "",
+    material: registro.material || "",
+    activo: registro.active !== false
+  };
+}
 
 /* =========================================================
-   CATEGORIAS
+   CARGAR CATÁLOGO DESDE SUPABASE
 ========================================================= */
 
-function obtenerCategorias(){
+async function cargarProductos() {
+  const contenedor = document.getElementById("productos");
+  contenedor.innerHTML = `
+    <div class="vacio">
+      <h3>Cargando catálogo...</h3>
+      <p>Estamos buscando los productos de Tropic District.</p>
+    </div>
+  `;
 
-  const categorias =
-    [
-      ...new Set(
-        productos
-          .map(p => p.categoria)
-          .filter(Boolean)
-      )
-    ];
-
-  return categorias;
-
-}
-
-
-function mostrarCategorias(){
-
-  const contenedor =
-    document.getElementById(
-      "categorias"
+  try {
+    const respuesta = await fetch(
+      `${SUPABASE_URL}/rest/v1/${TABLA_PRODUCTOS}?select=id,name,brand,category,price,description,image_url,image_path,accessory_type,material,active,created_at&active=eq.true&order=created_at.desc`,
+      {
+        method: "GET",
+        headers: {
+          "apikey": SUPABASE_ANON_KEY,
+          "Authorization": `Bearer ${SUPABASE_ANON_KEY}`,
+          "Accept": "application/json"
+        }
+      }
     );
 
-  contenedor.innerHTML = "";
+    if (!respuesta.ok) {
+      const detalle = await respuesta.text();
+      throw new Error(`Supabase respondió ${respuesta.status}: ${detalle}`);
+    }
 
+    const datos = await respuesta.json();
+    productos = Array.isArray(datos) ? datos.map(adaptarProducto) : [];
 
-  if(!productos.length){
-
-    return;
-
+    mostrarCategorias();
+    mostrarProductos();
+  } catch (error) {
+    console.error("Error al cargar productos de Supabase:", error);
+    document.getElementById("categorias").innerHTML = "";
+    contenedor.innerHTML = `
+      <div class="vacio">
+        <h3>No pudimos cargar el catálogo</h3>
+        <p>Revisa la conexión y los permisos de lectura pública de la tabla tropic_products en Supabase.</p>
+        <button class="btn-ordenar" style="max-width:220px;margin:18px auto 0" onclick="cargarProductos()">Intentar de nuevo</button>
+      </div>
+    `;
   }
-
-
-  const botonTodos =
-    document.createElement("button");
-
-  botonTodos.className =
-    "categoria-btn activa";
-
-  botonTodos.textContent =
-    "Todos";
-
-  botonTodos.onclick =
-    () => {
-
-      document
-        .querySelectorAll(".categoria-btn")
-        .forEach(
-          b =>
-            b.classList.remove(
-              "activa"
-            )
-        );
-
-      botonTodos.classList.add(
-        "activa"
-      );
-
-      mostrarProductos(
-        productos
-      );
-
-    };
-
-
-  contenedor.appendChild(
-    botonTodos
-  );
-
-
-  obtenerCategorias()
-    .forEach(categoria => {
-
-      const boton =
-        document.createElement(
-          "button"
-        );
-
-      boton.className =
-        "categoria-btn";
-
-      boton.textContent =
-        categoria;
-
-      boton.onclick =
-        () => {
-
-          document
-            .querySelectorAll(
-              ".categoria-btn"
-            )
-            .forEach(
-              b =>
-                b.classList.remove(
-                  "activa"
-                )
-            );
-
-          boton.classList.add(
-            "activa"
-          );
-
-          mostrarProductos(
-            productos.filter(
-              p =>
-                p.categoria ===
-                categoria
-            )
-          );
-
-        };
-
-
-      contenedor.appendChild(
-        boton
-      );
-
-    });
-
 }
 
+/* =========================================================
+   CATEGORÍAS
+========================================================= */
+
+function obtenerCategorias() {
+  return [...new Set(productos.map(p => p.categoria).filter(Boolean))];
+}
+
+function mostrarCategorias() {
+  const contenedor = document.getElementById("categorias");
+  contenedor.innerHTML = "";
+
+  if (!productos.length) return;
+
+  const botonTodos = document.createElement("button");
+  botonTodos.className = "categoria-btn activa";
+  botonTodos.textContent = "Todos";
+  botonTodos.onclick = () => {
+    document.querySelectorAll(".categoria-btn").forEach(b => b.classList.remove("activa"));
+    botonTodos.classList.add("activa");
+    mostrarProductos(productos);
+  };
+  contenedor.appendChild(botonTodos);
+
+  obtenerCategorias().forEach(categoria => {
+    const boton = document.createElement("button");
+    boton.className = "categoria-btn";
+    boton.textContent = categoria;
+    boton.onclick = () => {
+      document.querySelectorAll(".categoria-btn").forEach(b => b.classList.remove("activa"));
+      boton.classList.add("activa");
+      mostrarProductos(productos.filter(p => p.categoria === categoria));
+    };
+    contenedor.appendChild(boton);
+  });
+}
 
 /* =========================================================
    MOSTRAR PRODUCTOS
 ========================================================= */
 
-function mostrarProductos(
-  lista = productos
-){
-
-  const contenedor =
-    document.getElementById(
-      "productos"
-    );
-
-
+function mostrarProductos(lista = productos) {
+  const contenedor = document.getElementById("productos");
   contenedor.innerHTML = "";
 
-
-  if(!lista.length){
-
+  if (!lista.length) {
     contenedor.innerHTML = `
-
       <div class="vacio">
-
-        <h3>
-          Próximamente
-        </h3>
-
-        <p>
-          Estamos preparando nuevos productos
-          para Tropic District.
-        </p>
-
+        <h3>Próximamente</h3>
+        <p>Estamos preparando nuevos productos para Tropic District.</p>
       </div>
-
     `;
-
     return;
-
   }
 
+  const accesorios = lista.filter(esAccesorio);
+  const normales = lista.filter(p => !esAccesorio(p));
 
-  const accesorios =
-    lista.filter(
-      p =>
-        String(
-          p.categoria
-        ).toLowerCase()
-        === "accessories"
-    );
-
-
-  const normales =
-    lista.filter(
-      p =>
-        String(
-          p.categoria
-        ).toLowerCase()
-        !== "accessories"
-    );
-
-
-  if(normales.length){
-
-    const grid =
-      document.createElement(
-        "div"
-      );
-
-    grid.className =
-      "productos";
-
-
-    normales.forEach(
-      producto => {
-
-        grid.appendChild(
-          crearProducto(
-            producto
-          )
-        );
-
-      }
-    );
-
-
-    contenedor.appendChild(
-      grid
-    );
-
+  if (normales.length) {
+    const grid = document.createElement("div");
+    grid.className = "productos";
+    normales.forEach(producto => grid.appendChild(crearProducto(producto)));
+    contenedor.appendChild(grid);
   }
 
+  if (accesorios.length) {
+    const titulo = document.createElement("h2");
+    titulo.className = "titulo-seccion";
+    titulo.textContent = "Accesorios";
+    contenedor.appendChild(titulo);
 
-  if(accesorios.length){
-
-    const titulo =
-      document.createElement(
-        "h2"
-      );
-
-    titulo.className =
-      "titulo-seccion";
-
-    titulo.textContent =
-      "Accessories";
-
-    contenedor.appendChild(
-      titulo
-    );
-
-
-    const listaAccesorios =
-      document.createElement(
-        "div"
-      );
-
-    listaAccesorios.className =
-      "accesorios";
-
-
-    accesorios.forEach(
-      producto => {
-
-        listaAccesorios.appendChild(
-          crearAccesorio(
-            producto
-          )
-        );
-
-      }
-    );
-
-
-    contenedor.appendChild(
-      listaAccesorios
-    );
-
+    const listaAccesorios = document.createElement("div");
+    listaAccesorios.className = "accesorios";
+    accesorios.forEach(producto => listaAccesorios.appendChild(crearAccesorio(producto)));
+    contenedor.appendChild(listaAccesorios);
   }
-
 }
-
 
 /* =========================================================
    CREAR PRODUCTO
 ========================================================= */
 
-function crearProducto(
-  producto
-){
+function crearProducto(producto) {
+  const div = document.createElement("article");
+  div.className = "producto";
 
-  const div =
-    document.createElement(
-      "article"
-    );
-
-  div.className =
-    "producto";
-
-
-  const imagen =
-    escaparHTML(
-      producto.imagen ||
-      ""
-    );
-
-
-  const marca =
-    escaparHTML(
-      producto.marca ||
-      ""
-    );
-
-
-  const nombre =
-    escaparHTML(
-      producto.nombre ||
-      "Producto"
-    );
-
-
-  const descripcion =
-    escaparHTML(
-      producto.descripcion ||
-      ""
-    );
-
-
-  const precio =
-    Number(
-      producto.precio || 0
-    );
-
+  const imagen = escaparAtributo(producto.imagen);
+  const marca = escaparHTML(producto.marca);
+  const nombre = escaparHTML(producto.nombre);
+  const descripcion = escaparHTML(producto.descripcion);
+  const precio = Number(producto.precio || 0);
+  const id = escaparAtributo(producto.id);
 
   div.innerHTML = `
-
-    <img
-      class="producto-foto"
-      src="${imagen}"
-      alt="${nombre}"
-      onclick="abrirFoto('${imagen}')">
-
+    <img class="producto-foto"
+         src="${imagen}"
+         alt="${nombre}"
+         loading="lazy"
+         onclick="abrirFoto('${imagen}')"
+         onerror="this.style.visibility='hidden'">
 
     <div class="producto-info">
-
-      ${
-        marca
-        ?
-        `<div class="producto-marca">
-          ${marca}
-        </div>`
-        :
-        ""
-      }
-
-
-      <h3>
-        ${nombre}
-      </h3>
-
-
-      <p>
-        ${descripcion}
-      </p>
-
-
-      <div class="producto-precio">
-
-        $${precio.toLocaleString()}
-        MXN
-
-      </div>
-
-
-      <button
-        class="btn-ordenar"
-        onclick="event.stopPropagation(); abrirProducto(${producto.id})">
-
+      ${marca ? `<div class="producto-marca">${marca}</div>` : ""}
+      <h3>${nombre}</h3>
+      <p>${descripcion}</p>
+      <div class="producto-precio">$${formatoPrecio(precio)} MXN</div>
+      <button class="btn-ordenar"
+              onclick="event.stopPropagation(); abrirProducto('${id}')">
         ORDENAR
-
       </button>
-
     </div>
-
   `;
 
-
-  div.onclick =
-    e => {
-
-      if(
-        e.target.tagName
-        !== "BUTTON" &&
-        !e.target.classList.contains(
-          "producto-foto"
-        )
-      ){
-
-        abrirProducto(
-          producto.id
-        );
-
-      }
-
-    };
-
+  div.onclick = e => {
+    if (e.target.tagName !== "BUTTON" && !e.target.classList.contains("producto-foto")) {
+      abrirProducto(producto.id);
+    }
+  };
 
   return div;
-
 }
-
 
 /* =========================================================
    CREAR ACCESORIO
 ========================================================= */
 
-function crearAccesorio(
-  producto
-){
+function crearAccesorio(producto) {
+  const div = document.createElement("article");
+  div.className = "accesorio";
 
-  const div =
-    document.createElement(
-      "article"
-    );
-
-  div.className =
-    "accesorio";
-
-
-  const imagen =
-    escaparHTML(
-      producto.imagen ||
-      ""
-    );
-
-
-  const nombre =
-    escaparHTML(
-      producto.nombre ||
-      "Accesorio"
-    );
-
-
-  const tipo =
-    escaparHTML(
-      producto.tipo ||
-      "Accessory"
-    );
-
-
-  const material =
-    escaparHTML(
-      producto.material ||
-      ""
-    );
-
-
-  const precio =
-    Number(
-      producto.precio || 0
-    );
-
+  const imagen = escaparAtributo(producto.imagen);
+  const nombre = escaparHTML(producto.nombre);
+  const tipo = escaparHTML(producto.tipo || producto.categoria || "Accesorio");
+  const material = escaparHTML(producto.material || producto.descripcion || "");
+  const precio = Number(producto.precio || 0);
+  const id = escaparAtributo(producto.id);
 
   div.innerHTML = `
-
-    <img
-      class="accesorio-foto"
-      src="${imagen}"
-      alt="${nombre}"
-      onclick="abrirFoto('${imagen}')">
-
+    <img class="accesorio-foto"
+         src="${imagen}"
+         alt="${nombre}"
+         loading="lazy"
+         onclick="abrirFoto('${imagen}')"
+         onerror="this.style.visibility='hidden'">
 
     <div class="accesorio-info">
-
-      <div class="accesorio-tipo">
-        ${tipo}
-      </div>
-
-
-      <h3>
-        ${nombre}
-      </h3>
-
-
-      <p>
-        ${material}
-      </p>
-
+      <div class="accesorio-tipo">${tipo}</div>
+      <h3>${nombre}</h3>
+      <p>${material}</p>
     </div>
 
+    <div class="accesorio-precio">$${formatoPrecio(precio)} MXN</div>
 
-    <div class="accesorio-precio">
-
-      $${precio.toLocaleString()}
-      MXN
-
-    </div>
-
-
-    <button
-      class="accesorio-ordenar"
-      onclick="event.stopPropagation(); abrirProducto(${producto.id})">
-
+    <button class="accesorio-ordenar"
+            onclick="event.stopPropagation(); abrirProducto('${id}')">
       ORDENAR
-
     </button>
-
   `;
 
-
-  div.onclick =
-    e => {
-
-      if(
-        e.target.tagName
-        !== "BUTTON" &&
-        !e.target.classList.contains(
-          "accesorio-foto"
-        )
-      ){
-
-        abrirProducto(
-          producto.id
-        );
-
-      }
-
-    };
-
+  div.onclick = e => {
+    if (e.target.tagName !== "BUTTON" && !e.target.classList.contains("accesorio-foto")) {
+      abrirProducto(producto.id);
+    }
+  };
 
   return div;
-
 }
-
 
 /* =========================================================
-   ABRIR PRODUCTO
+   ABRIR PRODUCTO / FOTO
 ========================================================= */
 
-function abrirProducto(
-  id
-){
+function abrirProducto(id) {
+  productoActual = productos.find(p => String(p.id) === String(id));
+  if (!productoActual) return;
 
-  productoActual =
-    productos.find(
-      p =>
-        Number(p.id) ===
-        Number(id)
-    );
-
-
-  if(!productoActual){
-
-    return;
-
-  }
-
-
-  document.getElementById(
-    "detalleImagen"
-  ).src =
-    productoActual.imagen ||
-    "";
-
-
-  document.getElementById(
-    "detalleMarca"
-  ).textContent =
-    productoActual.marca ||
-    "";
-
-
-  document.getElementById(
-    "detalleNombre"
-  ).textContent =
-    productoActual.nombre ||
-    "Producto";
-
-
-  document.getElementById(
-    "detalleDescripcion"
-  ).textContent =
-    productoActual.descripcion ||
-    "";
-
-
-  document.getElementById(
-    "detallePrecio"
-  ).textContent =
-    "$" +
-    Number(
-      productoActual.precio || 0
-    ).toLocaleString() +
-    " MXN";
-
-
-  document.getElementById(
-    "modalProducto"
-  ).style.display =
-    "block";
-
+  document.getElementById("detalleImagen").src = productoActual.imagen || "";
+  document.getElementById("detalleImagen").alt = productoActual.nombre || "Producto";
+  document.getElementById("detalleMarca").textContent = productoActual.marca || "";
+  document.getElementById("detalleNombre").textContent = productoActual.nombre || "Producto";
+  document.getElementById("detalleDescripcion").textContent =
+    productoActual.descripcion || productoActual.material || "";
+  document.getElementById("detallePrecio").textContent =
+    "$" + formatoPrecio(productoActual.precio) + " MXN";
+  document.getElementById("modalProducto").style.display = "block";
 }
 
+function abrirFoto(imagen) {
+  if (!imagen) return;
 
-/* =========================================================
-   ABRIR FOTO
-========================================================= */
+  productoActual = null;
+  document.getElementById("detalleImagen").src = imagen;
+  document.getElementById("detalleMarca").textContent = "";
+  document.getElementById("detalleNombre").textContent = "";
+  document.getElementById("detalleDescripcion").textContent = "";
+  document.getElementById("detallePrecio").textContent = "";
+  document.getElementById("modalProducto").style.display = "block";
 
-function abrirFoto(
-  imagen
-){
-
-  if(!imagen){
-
-    return;
-
-  }
-
-
-  const modal =
-    document.getElementById(
-      "modalProducto"
-    );
-
-
-  const img =
-    document.getElementById(
-      "detalleImagen"
-    );
-
-
-  img.src =
-    imagen;
-
-
-  document.getElementById(
-    "detalleMarca"
-  ).textContent =
-    "";
-
-
-  document.getElementById(
-    "detalleNombre"
-  ).textContent =
-    "";
-
-
-  document.getElementById(
-    "detalleDescripcion"
-  ).textContent =
-    "";
-
-
-  document.getElementById(
-    "detallePrecio"
-  ).textContent =
-    "";
-
-
-  modal.style.display =
-    "block";
-
+  const botonAgregar = document.querySelector(".agregar");
+  if (botonAgregar) botonAgregar.style.display = "none";
 }
 
-
-/* =========================================================
-   CERRAR PRODUCTO
-========================================================= */
-
-function cerrarProducto(){
-
-  document.getElementById(
-    "modalProducto"
-  ).style.display =
-    "none";
-
+function cerrarProducto() {
+  document.getElementById("modalProducto").style.display = "none";
+  const botonAgregar = document.querySelector(".agregar");
+  if (botonAgregar) botonAgregar.style.display = "block";
+  productoActual = null;
 }
-
-
-/* =========================================================
-   AGREGAR AL CARRITO
-========================================================= */
-
-function agregarDesdeDetalle(){
-
-  if(!productoActual){
-
-    return;
-
-  }
-
-
-  const existente =
-    carrito.find(
-      item =>
-        Number(item.id) ===
-        Number(productoActual.id)
-    );
-
-
-  if(existente){
-
-    existente.cantidad += 1;
-
-  }else{
-
-    carrito.push({
-
-      ...productoActual,
-
-      cantidad:1
-
-    });
-
-  }
-
-
-  cerrarProducto();
-
-  actualizarCarrito();
-
-  abrirCarrito();
-
-}
-
-
-/* =========================================================
-   ACTUALIZAR CARRITO
-========================================================= */
-
-function actualizarCarrito(){
-
-  const contenedor =
-    document.getElementById(
-      "carritoItems"
-    );
-
-
-  const contador =
-    document.getElementById(
-      "contador"
-    );
-
-
-  let totalCantidad = 0;
-
-  let total = 0;
-
-
-  if(!carrito.length){
-
-    contenedor.innerHTML = `
-
-      <p style="
-        text-align:center;
-        color:#777;
-        padding:30px">
-
-        Tu carrito está vacío.
-
-      </p>
-
-    `;
-
-  }else{
-
-    contenedor.innerHTML = "";
-
-
-    carrito.forEach(
-      item => {
-
-        const cantidad =
-          Number(
-            item.cantidad
-          );
-
-
-        const precio =
-          Number(
-            item.precio || 0
-          );
-
-
-        const subtotal =
-          precio *
-          cantidad;
-
-
-        totalCantidad +=
-          cantidad;
-
-
-        total +=
-          subtotal;
-
-
-        const div =
-          document.createElement(
-            "div"
-          );
-
-
-        div.className =
-          "carrito-item";
-
-
-        div.innerHTML = `
-
-          <h4>
-            ${escaparHTML(
-              item.nombre
-            )}
-          </h4>
-
-
-          <small>
-            $${precio.toLocaleString()}
-            MXN por unidad
-          </small>
-
-
-          <div class="item-controles">
-
-            <button
-              onclick="cambiarCarrito(${item.id},-1)">
-              −
-            </button>
-
-
-            <span>
-              ${cantidad}
-            </span>
-
-
-            <button
-              onclick="cambiarCarrito(${item.id},1)">
-              +
-            </button>
-
-
-            <button
-              class="eliminar"
-              onclick="eliminarProducto(${item.id})">
-              ×
-            </button>
-
-          </div>
-
-
-          <p style="
-            margin-top:7px;
-            font-weight:bold;">
-
-            Subtotal:
-            $${subtotal.toLocaleString()}
-            MXN
-
-          </p>
-
-        `;
-
-
-        contenedor.appendChild(
-          div
-        );
-
-      }
-    );
-
-  }
-
-
-  contador.textContent =
-    totalCantidad;
-
-
-  document.getElementById(
-    "total"
-  ).textContent =
-    "$" +
-    total.toLocaleString() +
-    " MXN";
-
-}
-
 
 /* =========================================================
    CARRITO
 ========================================================= */
 
-function abrirCarrito(){
+function agregarDesdeDetalle() {
+  if (!productoActual) return;
 
-  document
-    .getElementById(
-      "carrito"
-    )
-    .classList.add(
-      "abierto"
-    );
+  const existente = carrito.find(item => String(item.id) === String(productoActual.id));
 
-}
-
-
-function cerrarCarrito(){
-
-  document
-    .getElementById(
-      "carrito"
-    )
-    .classList.remove(
-      "abierto"
-    );
-
-}
-
-
-function cambiarCarrito(
-  id,
-  cambio
-){
-
-  const item =
-    carrito.find(
-      p =>
-        Number(p.id) ===
-        Number(id)
-    );
-
-
-  if(!item){
-
-    return;
-
+  if (existente) {
+    existente.cantidad += 1;
+  } else {
+    carrito.push({ ...productoActual, cantidad: 1 });
   }
 
+  cerrarProducto();
+  actualizarCarrito();
+  abrirCarrito();
+}
 
-  item.cantidad +=
-    cambio;
+function actualizarCarrito() {
+  const contenedor = document.getElementById("carritoItems");
+  const contador = document.getElementById("contador");
+  let totalCantidad = 0;
+  let total = 0;
 
+  if (!carrito.length) {
+    contenedor.innerHTML = `
+      <p style="text-align:center;color:#777;padding:30px">
+        Tu carrito está vacío.
+      </p>
+    `;
+  } else {
+    contenedor.innerHTML = "";
 
-  if(
-    item.cantidad <= 0
-  ){
+    carrito.forEach(item => {
+      const cantidad = Number(item.cantidad || 0);
+      const precio = Number(item.precio || 0);
+      const subtotal = precio * cantidad;
+      totalCantidad += cantidad;
+      total += subtotal;
 
-    carrito =
-      carrito.filter(
-        p =>
-          Number(p.id) !==
-          Number(id)
-      );
+      const div = document.createElement("div");
+      div.className = "carrito-item";
+      const id = escaparAtributo(item.id);
 
+      div.innerHTML = `
+        <h4>${escaparHTML(item.nombre)}</h4>
+        <small>$${formatoPrecio(precio)} MXN por unidad</small>
+        <div class="item-controles">
+          <button onclick="cambiarCarrito('${id}',-1)">−</button>
+          <span>${cantidad}</span>
+          <button onclick="cambiarCarrito('${id}',1)">+</button>
+          <button class="eliminar" onclick="eliminarProducto('${id}')">×</button>
+        </div>
+        <p style="margin-top:7px;font-weight:bold">
+          Subtotal: $${formatoPrecio(subtotal)} MXN
+        </p>
+      `;
+      contenedor.appendChild(div);
+    });
   }
 
-
-  actualizarCarrito();
-
+  contador.textContent = totalCantidad;
+  document.getElementById("total").textContent = "$" + formatoPrecio(total) + " MXN";
 }
 
-
-function eliminarProducto(
-  id
-){
-
-  carrito =
-    carrito.filter(
-      p =>
-        Number(p.id) !==
-        Number(id)
-    );
-
-
-  actualizarCarrito();
-
+function abrirCarrito() {
+  document.getElementById("carrito").classList.add("abierto");
 }
 
+function cerrarCarrito() {
+  document.getElementById("carrito").classList.remove("abierto");
+}
+
+function cambiarCarrito(id, cambio) {
+  const item = carrito.find(p => String(p.id) === String(id));
+  if (!item) return;
+
+  item.cantidad += cambio;
+  if (item.cantidad <= 0) {
+    carrito = carrito.filter(p => String(p.id) !== String(id));
+  }
+  actualizarCarrito();
+}
+
+function eliminarProducto(id) {
+  carrito = carrito.filter(p => String(p.id) !== String(id));
+  actualizarCarrito();
+}
 
 /* =========================================================
    CHECKOUT
 ========================================================= */
 
-function abrirCheckout(){
-
-  if(!carrito.length){
-
-    alert(
-      "Agrega al menos un producto al carrito."
-    );
-
+function abrirCheckout() {
+  if (!carrito.length) {
+    alert("Agrega al menos un producto al carrito.");
     return;
-
   }
 
-
-  const resumen =
-    document.getElementById(
-      "resumen"
-    );
-
-
+  const resumen = document.getElementById("resumen");
   let html = "";
-
   let total = 0;
 
-
-  carrito.forEach(
-    item => {
-
-      const subtotal =
-        Number(
-          item.precio || 0
-        ) *
-        Number(
-          item.cantidad
-        );
-
-
-      total +=
-        subtotal;
-
-
-      html += `
-
-        <div class="resumen-linea">
-
-          <span>
-            ${escaparHTML(
-              item.nombre
-            )}
-            ×
-            ${item.cantidad}
-          </span>
-
-          <strong>
-            $${subtotal.toLocaleString()}
-          </strong>
-
-        </div>
-
-      `;
-
-    }
-  );
-
+  carrito.forEach(item => {
+    const subtotal = Number(item.precio || 0) * Number(item.cantidad || 0);
+    total += subtotal;
+    html += `
+      <div class="resumen-linea">
+        <span>${escaparHTML(item.nombre)} × ${Number(item.cantidad)}</span>
+        <strong>$${formatoPrecio(subtotal)}</strong>
+      </div>
+    `;
+  });
 
   html += `
-
-    <div style="
-      display:flex;
-      justify-content:space-between;
-      padding-top:15px;
-      font-size:20px;
-      font-weight:bold;">
-
-      <span>
-        Total
-      </span>
-
-      <span>
-        $${total.toLocaleString()}
-        MXN
-      </span>
-
+    <div style="display:flex;justify-content:space-between;padding-top:15px;font-size:20px;font-weight:bold">
+      <span>Total</span>
+      <span>$${formatoPrecio(total)} MXN</span>
     </div>
-
   `;
 
-
-  resumen.innerHTML =
-    html;
-
-
-  document.getElementById(
-    "checkout"
-  ).style.display =
-    "block";
-
-
+  resumen.innerHTML = html;
+  document.getElementById("checkout").style.display = "block";
   cerrarCarrito();
-
 }
 
-
-/* =========================================================
-   CERRAR CHECKOUT
-========================================================= */
-
-function cerrarCheckout(){
-
-  document.getElementById(
-    "checkout"
-  ).style.display =
-    "none";
-
+function cerrarCheckout() {
+  document.getElementById("checkout").style.display = "none";
 }
 
-
-/* =========================================================
-   ENVIAR PEDIDO
-========================================================= */
-
-function enviarPedido(
-  e
-){
-
+function enviarPedido(e) {
   e.preventDefault();
 
-
-  const nombre =
-    document.getElementById(
-      "cliente"
-    ).value;
-
-
-  const telefono =
-    document.getElementById(
-      "telefono"
-    ).value;
-
-
-  const observaciones =
-    document.getElementById(
-      "observaciones"
-    ).value;
-
-
-  let mensaje =
-    "Hola, quiero realizar el siguiente pedido:\n\n";
-
-
-  let total = 0;
-
-
-  carrito.forEach(
-    item => {
-
-      const precio =
-        Number(
-          item.precio || 0
-        );
-
-
-      const subtotal =
-        precio *
-        Number(
-          item.cantidad
-        );
-
-
-      total +=
-        subtotal;
-
-
-      mensaje +=
-        "• " +
-        item.nombre +
-        " | Cantidad: " +
-        item.cantidad +
-        " | Precio: $" +
-        precio +
-        " | Subtotal: $" +
-        subtotal +
-        "\n";
-
-    }
-  );
-
-
-  mensaje +=
-    "\nTotal aproximado: $" +
-    total +
-    " MXN";
-
-
-  mensaje +=
-    "\n\nNombre: " +
-    nombre;
-
-
-  mensaje +=
-    "\nTeléfono: " +
-    telefono;
-
-
-  if(observaciones){
-
-    mensaje +=
-      "\nObservaciones: " +
-      observaciones;
-
+  if (!carrito.length) {
+    alert("Tu carrito está vacío.");
+    cerrarCheckout();
+    return;
   }
 
+  const nombre = document.getElementById("cliente").value.trim();
+  const telefono = document.getElementById("telefono").value.trim();
+  const observaciones = document.getElementById("observaciones").value.trim();
 
-  window.open(
+  let mensaje = "Hola, quiero realizar el siguiente pedido de Tropic District:\n\n";
+  let total = 0;
 
-    "https://wa.me/" +
-    WHATSAPP +
-    "?text=" +
-    encodeURIComponent(
-      mensaje
-    ),
+  carrito.forEach(item => {
+    const precio = Number(item.precio || 0);
+    const subtotal = precio * Number(item.cantidad || 0);
+    total += subtotal;
+    mensaje += `• ${item.nombre} | Cantidad: ${item.cantidad} | Precio: $${formatoPrecio(precio)} | Subtotal: $${formatoPrecio(subtotal)}\n`;
+  });
 
-    "_blank"
+  mensaje += `\nTotal aproximado: $${formatoPrecio(total)} MXN`;
+  mensaje += `\n\nNombre: ${nombre}`;
+  mensaje += `\nTeléfono: ${telefono}`;
+  if (observaciones) mensaje += `\nObservaciones: ${observaciones}`;
 
-  );
-
+  const url = "https://wa.me/" + WHATSAPP + "?text=" + encodeURIComponent(mensaje);
+  window.open(url, "_blank", "noopener");
 }
-
 
 /* =========================================================
    CERRAR MODALES AL HACER CLIC AFUERA
 ========================================================= */
 
-window.addEventListener(
-  "click",
-  e => {
+window.addEventListener("click", e => {
+  const modal = document.getElementById("modalProducto");
+  if (e.target === modal) cerrarProducto();
 
-    const modal =
-      document.getElementById(
-        "modalProducto"
-      );
-
-
-    if(e.target === modal){
-
-      cerrarProducto();
-
-    }
-
-
-    const checkout =
-      document.getElementById(
-        "checkout"
-      );
-
-
-    if(e.target === checkout){
-
-      cerrarCheckout();
-
-    }
-
-  }
-);
-
+  const checkout = document.getElementById("checkout");
+  if (e.target === checkout) cerrarCheckout();
+});
 
 /* =========================================================
    INICIO
 ========================================================= */
 
-mostrarCategorias();
-
-mostrarProductos();
-
 actualizarCarrito();
-
+cargarProductos();
 
 /* =========================================================
    SERVICE WORKER
 ========================================================= */
 
-if(
-  "serviceWorker" in navigator
-){
-
-  window.addEventListener(
-    "load",
-    () => {
-
-      navigator.serviceWorker
-        .register(
-          "./sw.js"
-        )
-        .then(
-          r =>
-            console.log(
-              "Service Worker registrado:",
-              r.scope
-            )
-        )
-        .catch(
-          e =>
-            console.error(
-              "Error Service Worker:",
-              e
-            )
-        );
-
-    }
-  );
-
+if ("serviceWorker" in navigator) {
+  window.addEventListener("load", () => {
+    navigator.serviceWorker.register("./service-worker.js")
+      .then(registro => console.log("Service Worker registrado:", registro.scope))
+      .catch(error => console.error("Error al registrar Service Worker:", error));
+  });
 }
-
 </script>
-
 </body>
 </html>
