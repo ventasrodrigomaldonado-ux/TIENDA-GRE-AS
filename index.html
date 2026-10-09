@@ -3,22 +3,25 @@
 <head>
 
 <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<meta name="theme-color" content="#071a2d">
+
+<link rel="manifest" href="./manifest.webmanifest">
 
 <meta
-  name="viewport"
-  content="width=device-width, initial-scale=1.0">
+  name="apple-mobile-web-app-capable"
+  content="yes">
 
 <meta
-  name="theme-color"
-  content="#071a2d">
+  name="apple-mobile-web-app-status-bar-style"
+  content="black-translucent">
 
-<title>
-Tropic District | Administrador
-</title>
+<meta
+  name="apple-mobile-web-app-title"
+  content="Tropic District">
 
-<script
-  src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2">
-</script>
+<title>Tropic District | Streetwear & Sneakers</title>
 
 
 <style>
@@ -33,6 +36,10 @@ Tropic District | Administrador
   padding:0;
 }
 
+html{
+  scroll-behavior:smooth;
+}
+
 body{
 
   font-family:
@@ -40,12 +47,16 @@ body{
     Helvetica,
     sans-serif;
 
-  background:
-    #eef2f5;
-
   color:#17202a;
 
   min-height:100vh;
+
+  background:
+    linear-gradient(
+      135deg,
+      #f5f7fa,
+      #ffffff
+    );
 
 }
 
@@ -57,7 +68,6 @@ body{
 :root{
 
   --azul:#0878d1;
-
   --azul-oscuro:#071a2d;
 
   --amarillo:#ffd21c;
@@ -68,196 +78,18 @@ body{
 
   --rosa:#ff4fa3;
 
+  --negro:#111111;
+
+  --blanco:#ffffff;
+
   --gris:#68727d;
 
-  --blanco:#fff;
+  --gris-claro:#eef2f5;
 
-  --borde:#dfe5e9;
+  --sombra:
+    0 12px 35px rgba(0,0,0,.12);
 
-}
-
-
-/* =========================================================
-   LOGIN
-========================================================= */
-
-.login{
-
-  min-height:100vh;
-
-  display:flex;
-
-  align-items:center;
-
-  justify-content:center;
-
-  padding:20px;
-
-  background:
-    linear-gradient(
-      135deg,
-      #071a2d,
-      #0878d1,
-      #12a86b
-    );
-
-}
-
-.login-box{
-
-  width:100%;
-
-  max-width:430px;
-
-  background:white;
-
-  border-radius:22px;
-
-  padding:35px;
-
-  box-shadow:
-    0 25px 70px rgba(0,0,0,.3);
-
-  text-align:center;
-
-}
-
-.login-logo{
-
-  width:65px;
-
-  height:65px;
-
-  margin:0 auto 18px;
-
-  border-radius:16px;
-
-  background:
-    linear-gradient(
-      135deg,
-      var(--azul),
-      var(--verde)
-    );
-
-  color:white;
-
-  display:flex;
-
-  align-items:center;
-
-  justify-content:center;
-
-  font-size:23px;
-
-  font-weight:900;
-
-  box-shadow:
-    5px 5px 0 var(--amarillo);
-
-}
-
-.login-box h1{
-
-  font-size:27px;
-
-  margin-bottom:5px;
-
-}
-
-.login-box p{
-
-  color:var(--gris);
-
-  font-size:13px;
-
-  margin-bottom:25px;
-
-}
-
-.login-box input{
-
-  width:100%;
-
-  padding:14px;
-
-  border:
-    1px solid #ccd4da;
-
-  border-radius:10px;
-
-  margin-bottom:12px;
-
-  font-size:15px;
-
-  outline:none;
-
-}
-
-.login-box input:focus{
-
-  border-color:
-    var(--azul);
-
-}
-
-.btn-login{
-
-  width:100%;
-
-  padding:14px;
-
-  border:0;
-
-  border-radius:10px;
-
-  background:
-    var(--azul);
-
-  color:white;
-
-  font-weight:900;
-
-  font-size:15px;
-
-  cursor:pointer;
-
-}
-
-.btn-login:hover{
-
-  background:
-    var(--azul-oscuro);
-
-}
-
-.login-error{
-
-  display:none;
-
-  margin-top:15px;
-
-  background:#ffe7e9;
-
-  color:#b4232d;
-
-  padding:11px;
-
-  border-radius:9px;
-
-  font-size:13px;
-
-}
-
-
-/* =========================================================
-   ADMIN
-========================================================= */
-
-.admin{
-
-  display:none;
-
-  min-height:100vh;
+  --radio:16px;
 
 }
 
@@ -266,22 +98,7 @@ body{
    HEADER
 ========================================================= */
 
-.topbar{
-
-  background:
-    var(--azul-oscuro);
-
-  color:white;
-
-  padding:15px 20px;
-
-  display:flex;
-
-  justify-content:space-between;
-
-  align-items:center;
-
-  gap:20px;
+header{
 
   position:sticky;
 
@@ -289,12 +106,38 @@ body{
 
   z-index:1000;
 
+  background:
+    rgba(7,26,45,.96);
+
+  color:white;
+
   border-bottom:
     4px solid var(--amarillo);
 
+  box-shadow:
+    0 5px 25px rgba(0,0,0,.22);
+
 }
 
-.topbar-marca{
+.header-contenido{
+
+  max-width:1250px;
+
+  margin:auto;
+
+  padding:16px 20px;
+
+  display:flex;
+
+  align-items:center;
+
+  justify-content:space-between;
+
+  gap:20px;
+
+}
+
+.marca{
 
   display:flex;
 
@@ -304,13 +147,13 @@ body{
 
 }
 
-.logo-admin{
+.logo-texto{
 
-  width:45px;
+  width:48px;
 
-  height:45px;
+  height:48px;
 
-  border-radius:11px;
+  border-radius:12px;
 
   background:
     linear-gradient(
@@ -325,192 +168,483 @@ body{
 
   justify-content:center;
 
+  font-size:20px;
+
   font-weight:900;
+
+  color:white;
 
   box-shadow:
     4px 4px 0 var(--amarillo);
 
 }
 
-.topbar h1{
+.marca h1{
 
-  font-size:21px;
+  font-size:25px;
 
-}
+  letter-spacing:1px;
 
-.topbar small{
-
-  color:#bcd0df;
+  font-weight:900;
 
 }
 
-.btn-logout{
+.marca p{
 
-  border:
-    1px solid #ffffff55;
+  color:#d6e4ef;
+
+  font-size:12px;
+
+  margin-top:2px;
+
+}
+
+.btn-carrito{
+
+  border:0;
 
   background:
-    transparent;
+    var(--amarillo);
+
+  color:#111;
+
+  padding:11px 17px;
+
+  border-radius:25px;
+
+  cursor:pointer;
+
+  font-size:14px;
+
+  font-weight:900;
+
+  transition:.25s;
+
+}
+
+.btn-carrito:hover{
+
+  transform:translateY(-2px);
+
+  box-shadow:
+    0 5px 15px rgba(0,0,0,.25);
+
+}
+
+
+/* =========================================================
+   HERO
+========================================================= */
+
+.hero{
+
+  max-width:1250px;
+
+  margin:25px auto;
+
+  padding:55px 30px;
+
+  border-radius:24px;
+
+  position:relative;
+
+  overflow:hidden;
 
   color:white;
 
-  padding:9px 14px;
+  background:
 
-  border-radius:9px;
+    linear-gradient(
+      125deg,
+      #071a2d,
+      #0878d1,
+      #12a86b
+    );
+
+  box-shadow:
+    var(--sombra);
+
+}
+
+.hero::before{
+
+  content:"";
+
+  position:absolute;
+
+  width:250px;
+
+  height:250px;
+
+  border-radius:50%;
+
+  background:
+    var(--amarillo);
+
+  right:-80px;
+
+  top:-100px;
+
+  opacity:.9;
+
+}
+
+.hero::after{
+
+  content:"";
+
+  position:absolute;
+
+  width:180px;
+
+  height:180px;
+
+  border-radius:50%;
+
+  background:
+    var(--rojo);
+
+  right:100px;
+
+  bottom:-100px;
+
+  opacity:.75;
+
+}
+
+.hero-contenido{
+
+  position:relative;
+
+  z-index:2;
+
+  max-width:800px;
+
+}
+
+.hero h2{
+
+  font-size:
+    clamp(38px,7vw,72px);
+
+  line-height:.95;
+
+  font-weight:900;
+
+  text-transform:uppercase;
+
+  letter-spacing:-2px;
+
+}
+
+.hero h2 span{
+
+  color:var(--amarillo);
+
+}
+
+.hero p{
+
+  margin-top:18px;
+
+  max-width:650px;
+
+  color:#edf7ff;
+
+  line-height:1.6;
+
+  font-size:16px;
+
+}
+
+.hero-frase{
+
+  display:inline-block;
+
+  margin-top:25px;
+
+  background:var(--rojo);
+
+  color:white;
+
+  padding:10px 17px;
+
+  border-radius:30px;
+
+  font-size:13px;
+
+  font-weight:900;
+
+  letter-spacing:1px;
+
+}
+
+
+/* =========================================================
+   CATEGORIAS DINÁMICAS
+========================================================= */
+
+.categorias{
+
+  max-width:1250px;
+
+  margin:25px auto;
+
+  padding:0 20px;
+
+  display:flex;
+
+  flex-wrap:wrap;
+
+  gap:10px;
+
+}
+
+.categoria-btn{
+
+  border:2px solid var(--azul);
+
+  background:white;
+
+  color:var(--azul-oscuro);
+
+  padding:10px 17px;
+
+  border-radius:25px;
+
+  cursor:pointer;
+
+  font-weight:800;
+
+  transition:.25s;
+
+}
+
+.categoria-btn:hover,
+.categoria-btn.activa{
+
+  background:var(--azul);
+
+  color:white;
+
+  transform:translateY(-2px);
+
+}
+
+
+/* =========================================================
+   CATALOGO
+========================================================= */
+
+.catalogo{
+
+  max-width:1250px;
+
+  margin:auto;
+
+  padding:
+    10px 20px 70px;
+
+}
+
+.titulo-seccion{
+
+  display:flex;
+
+  align-items:center;
+
+  gap:12px;
+
+  margin:
+    35px 0 18px;
+
+  font-size:28px;
+
+  font-weight:900;
+
+  text-transform:uppercase;
+
+}
+
+.titulo-seccion::before{
+
+  content:"";
+
+  width:9px;
+
+  height:30px;
+
+  background:var(--amarillo);
+
+  border-radius:4px;
+
+}
+
+
+/* =========================================================
+   GRID PRODUCTOS
+========================================================= */
+
+.productos{
+
+  display:grid;
+
+  grid-template-columns:
+    repeat(
+      auto-fill,
+      minmax(220px,1fr)
+    );
+
+  gap:18px;
+
+}
+
+
+/* =========================================================
+   TARJETA PRODUCTO
+========================================================= */
+
+.producto{
+
+  background:white;
+
+  border-radius:var(--radio);
+
+  overflow:hidden;
+
+  border:
+    1px solid #e1e6ea;
+
+  box-shadow:
+    0 7px 22px rgba(0,0,0,.09);
+
+  transition:.25s;
+
+  display:flex;
+
+  flex-direction:column;
+
+}
+
+.producto:hover{
+
+  transform:
+    translateY(-5px);
+
+  box-shadow:
+    0 15px 35px rgba(0,0,0,.16);
+
+}
+
+.producto-foto{
+
+  width:100%;
+
+  height:240px;
+
+  object-fit:cover;
+
+  background:#eef2f5;
 
   cursor:pointer;
 
 }
 
+.producto-info{
 
-/* =========================================================
-   CONTENEDOR
-========================================================= */
+  padding:17px;
 
-.contenedor{
+  display:flex;
 
-  max-width:1200px;
+  flex-direction:column;
 
-  margin:auto;
-
-  padding:25px 20px 60px;
+  flex:1;
 
 }
 
+.producto-marca{
 
-/* =========================================================
-   ESTADISTICAS
-========================================================= */
+  font-size:11px;
 
-.stats{
+  font-weight:900;
 
-  display:grid;
+  color:var(--azul);
 
-  grid-template-columns:
-    repeat(3,1fr);
+  text-transform:uppercase;
 
-  gap:15px;
+  letter-spacing:1px;
 
-  margin-bottom:25px;
+  margin-bottom:5px;
 
 }
 
-.stat{
+.producto-info h3{
 
-  background:white;
-
-  padding:20px;
-
-  border-radius:15px;
-
-  border:
-    1px solid var(--borde);
-
-  box-shadow:
-    0 5px 18px rgba(0,0,0,.06);
-
-}
-
-.stat span{
-
-  display:block;
-
-  color:var(--gris);
-
-  font-size:12px;
+  font-size:18px;
 
   margin-bottom:7px;
 
 }
 
-.stat strong{
+.producto-info p{
 
-  font-size:27px;
+  color:var(--gris);
 
-}
+  font-size:13px;
 
+  line-height:1.5;
 
-/* =========================================================
-   ACCIONES
-========================================================= */
-
-.acciones{
-
-  display:flex;
-
-  justify-content:space-between;
-
-  align-items:center;
-
-  gap:15px;
-
-  margin-bottom:20px;
+  flex:1;
 
 }
 
-.btn-principal{
+.producto-precio{
 
-  border:0;
-
-  background:
-    var(--azul);
-
-  color:white;
-
-  padding:13px 18px;
-
-  border-radius:10px;
+  font-size:21px;
 
   font-weight:900;
 
-  cursor:pointer;
+  margin:
+    14px 0;
 
 }
 
-.btn-principal:hover{
-
-  background:
-    var(--azul-oscuro);
-
-}
-
-
-/* =========================================================
-   BUSQUEDA
-========================================================= */
-
-.busqueda{
+.btn-ordenar{
 
   width:100%;
 
-  padding:13px 15px;
+  border:0;
 
-  border:
-    1px solid var(--borde);
+  background:var(--azul);
+
+  color:white;
+
+  padding:12px;
 
   border-radius:10px;
 
-  margin-bottom:20px;
+  cursor:pointer;
 
   font-size:14px;
 
-  outline:none;
+  font-weight:900;
+
+  transition:.25s;
 
 }
 
-.busqueda:focus{
+.btn-ordenar:hover{
 
-  border-color:
-    var(--azul);
+  background:var(--azul-oscuro);
 
 }
 
 
 /* =========================================================
-   LISTA
+   ACCESORIOS
 ========================================================= */
 
-.lista{
+.accesorios{
 
   display:flex;
 
@@ -520,90 +654,58 @@ body{
 
 }
 
-.item{
-
-  background:white;
-
-  border:
-    1px solid var(--borde);
-
-  border-radius:14px;
-
-  padding:13px;
+.accesorio{
 
   display:flex;
 
   align-items:center;
 
-  gap:15px;
+  background:white;
+
+  border-radius:12px;
+
+  overflow:hidden;
+
+  border:
+    1px solid #e1e6ea;
+
+  box-shadow:
+    0 5px 16px rgba(0,0,0,.08);
+
+  min-height:105px;
 
 }
 
-.item-imagen{
+.accesorio-foto{
 
-  width:80px;
+  width:110px;
 
-  height:80px;
+  height:105px;
 
   object-fit:cover;
 
-  border-radius:10px;
+  background:#fff1f8;
 
-  background:#eef2f5;
+  cursor:pointer;
 
   flex-shrink:0;
 
 }
 
-.item-info{
+.accesorio-info{
+
+  padding:
+    12px 16px;
 
   flex:1;
 
-  min-width:0;
-
 }
 
-.item-info h3{
+.accesorio-tipo{
 
-  font-size:16px;
+  color:var(--rosa);
 
-  margin-bottom:4px;
-
-}
-
-.item-info p{
-
-  color:var(--gris);
-
-  font-size:12px;
-
-  margin:3px 0;
-
-}
-
-.item-precio{
-
-  font-weight:900;
-
-  font-size:17px;
-
-}
-
-.item-categoria{
-
-  display:inline-block;
-
-  background:
-    #eaf4fc;
-
-  color:
-    var(--azul);
-
-  padding:4px 8px;
-
-  border-radius:15px;
-
-  font-size:10px;
+  font-size:11px;
 
   font-weight:900;
 
@@ -611,77 +713,58 @@ body{
 
 }
 
-.item-acciones{
+.accesorio-info h3{
 
-  display:flex;
+  font-size:17px;
 
-  flex-wrap:wrap;
-
-  gap:7px;
+  margin:
+    4px 0;
 
 }
 
-.btn-editar,
-.btn-estado,
-.btn-eliminar{
+.accesorio-info p{
+
+  color:var(--gris);
+
+  font-size:12px;
+
+}
+
+.accesorio-precio{
+
+  padding:15px;
+
+  font-size:18px;
+
+  font-weight:900;
+
+  white-space:nowrap;
+
+}
+
+.accesorio-ordenar{
+
+  margin-right:15px;
 
   border:0;
 
-  padding:8px 10px;
+  background:var(--rosa);
 
-  border-radius:8px;
+  color:white;
+
+  padding:10px 13px;
+
+  border-radius:9px;
 
   cursor:pointer;
 
-  font-weight:800;
-
-  font-size:11px;
-
-}
-
-.btn-editar{
-
-  background:
-    #e9f3fb;
-
-  color:
-    var(--azul);
-
-}
-
-.btn-estado{
-
-  background:
-    #e9f8f1;
-
-  color:
-    var(--verde);
-
-}
-
-.btn-estado.inactivo{
-
-  background:
-    #fff0f0;
-
-  color:
-    var(--rojo);
-
-}
-
-.btn-eliminar{
-
-  background:
-    #ffe8ea;
-
-  color:
-    var(--rojo);
+  font-weight:900;
 
 }
 
 
 /* =========================================================
-   MODAL
+   MODAL PRODUCTO
 ========================================================= */
 
 .modal{
@@ -693,7 +776,7 @@ body{
   inset:0;
 
   background:
-    rgba(0,0,0,.75);
+    rgba(0,0,0,.82);
 
   z-index:3000;
 
@@ -703,75 +786,173 @@ body{
 
 }
 
-.modal-box{
+.modal-producto{
 
-  max-width:650px;
+  max-width:850px;
 
-  margin:3% auto;
+  margin:
+    4% auto;
 
   background:white;
 
   border-radius:20px;
 
-  padding:28px;
+  overflow:hidden;
 
   position:relative;
 
-}
-
-.modal-header{
-
-  display:flex;
-
-  justify-content:space-between;
-
-  align-items:center;
-
-  margin-bottom:20px;
-
-}
-
-.modal-header h2{
-
-  font-size:24px;
+  box-shadow:
+    0 20px 60px rgba(0,0,0,.5);
 
 }
 
 .cerrar{
 
-  width:38px;
+  position:absolute;
 
-  height:38px;
+  right:15px;
 
-  border:0;
+  top:12px;
+
+  width:42px;
+
+  height:42px;
 
   border-radius:50%;
 
-  background:#eef2f5;
+  background:
+    rgba(0,0,0,.75);
 
-  font-size:25px;
+  color:white;
+
+  display:flex;
+
+  align-items:center;
+
+  justify-content:center;
+
+  font-size:28px;
 
   cursor:pointer;
 
+  z-index:5;
+
 }
 
-
-/* =========================================================
-   FORMULARIO
-========================================================= */
-
-.form-grid{
+.detalle{
 
   display:grid;
 
   grid-template-columns:
     1fr 1fr;
 
-  gap:15px;
+}
+
+.detalle img{
+
+  width:100%;
+
+  height:450px;
+
+  object-fit:cover;
 
 }
 
-.campo{
+.detalle-info{
+
+  padding:30px;
+
+}
+
+.detalle-info h2{
+
+  font-size:30px;
+
+  margin-bottom:10px;
+
+}
+
+.detalle-marca{
+
+  color:var(--azul);
+
+  font-weight:900;
+
+  text-transform:uppercase;
+
+  margin-bottom:18px;
+
+}
+
+.detalle-descripcion{
+
+  color:#606b75;
+
+  line-height:1.6;
+
+  margin-bottom:20px;
+
+}
+
+.detalle-precio{
+
+  font-size:28px;
+
+  font-weight:900;
+
+  margin-bottom:20px;
+
+}
+
+.agregar{
+
+  width:100%;
+
+  border:0;
+
+  background:var(--azul);
+
+  color:white;
+
+  padding:15px;
+
+  border-radius:10px;
+
+  cursor:pointer;
+
+  font-size:16px;
+
+  font-weight:900;
+
+}
+
+
+/* =========================================================
+   CARRITO
+========================================================= */
+
+.carrito{
+
+  position:fixed;
+
+  right:-430px;
+
+  top:0;
+
+  width:400px;
+
+  max-width:92%;
+
+  height:100vh;
+
+  background:white;
+
+  z-index:4000;
+
+  box-shadow:
+    -10px 0 35px rgba(0,0,0,.3);
+
+  transition:.35s;
 
   display:flex;
 
@@ -779,147 +960,142 @@ body{
 
 }
 
-.campo.full{
+.carrito.abierto{
 
-  grid-column:
-    1 / -1;
+  right:0;
 
 }
 
-.campo label{
+.carrito-header{
 
-  font-size:12px;
+  background:
+    var(--azul-oscuro);
 
-  font-weight:900;
+  color:white;
+
+  padding:20px;
+
+  display:flex;
+
+  justify-content:space-between;
+
+  align-items:center;
+
+}
+
+.carrito-header h2{
+
+  font-size:22px;
+
+}
+
+.cerrar-carrito{
+
+  font-size:28px;
+
+  cursor:pointer;
+
+}
+
+.carrito-items{
+
+  flex:1;
+
+  overflow:auto;
+
+  padding:15px;
+
+}
+
+.carrito-item{
+
+  padding:
+    14px 0;
+
+  border-bottom:
+    1px solid #ddd;
+
+}
+
+.carrito-item h4{
 
   margin-bottom:6px;
 
 }
 
-.campo input,
-.campo select,
-.campo textarea{
+.carrito-item small{
 
-  width:100%;
-
-  padding:12px;
-
-  border:
-    1px solid #ccd4da;
-
-  border-radius:9px;
-
-  font-family:Arial;
-
-  outline:none;
+  color:#777;
 
 }
 
-.campo textarea{
+.item-controles{
 
-  min-height:90px;
+  display:flex;
 
-  resize:vertical;
+  align-items:center;
 
-}
+  gap:8px;
 
-.campo input:focus,
-.campo select:focus,
-.campo textarea:focus{
-
-  border-color:
-    var(--azul);
+  margin-top:9px;
 
 }
 
+.item-controles button{
 
-/* =========================================================
-   ACCESORIOS
-========================================================= */
-
-.accesorios-extra{
-
-  display:none;
-
-  margin-top:15px;
-
-  padding:15px;
+  border:0;
 
   background:
-    #fff2fa;
+    var(--azul-oscuro);
 
-  border:
-    1px solid #ffc4e3;
+  color:white;
 
-  border-radius:12px;
+  width:28px;
 
-}
+  height:28px;
 
-.accesorios-extra h3{
+  border-radius:50%;
 
-  color:
-    var(--rosa);
-
-  font-size:14px;
-
-  margin-bottom:12px;
+  cursor:pointer;
 
 }
 
+.item-controles .eliminar{
 
-/* =========================================================
-   FOTO
-========================================================= */
+  margin-left:auto;
 
-.foto-area{
-
-  margin-top:18px;
-
-  border:
-    2px dashed #ccd4da;
-
-  border-radius:12px;
-
-  padding:15px;
-
-  text-align:center;
+  background:var(--rojo);
 
 }
 
-.foto-preview{
+.carrito-footer{
 
-  width:180px;
+  padding:20px;
 
-  height:180px;
-
-  object-fit:cover;
-
-  border-radius:12px;
-
-  display:none;
-
-  margin:0 auto 12px;
+  border-top:
+    1px solid #ddd;
 
 }
 
-.input-foto{
+.total{
+
+  display:flex;
+
+  justify-content:space-between;
+
+  font-size:21px;
+
+  font-weight:900;
+
+  margin-bottom:15px;
+
+}
+
+.btn-revisar{
 
   width:100%;
 
-}
-
-
-/* =========================================================
-   GUARDAR
-========================================================= */
-
-.btn-guardar{
-
-  width:100%;
-
-  margin-top:20px;
-
-  padding:15px;
+  padding:14px;
 
   border:0;
 
@@ -930,51 +1106,233 @@ body{
 
   color:white;
 
-  font-weight:900;
+  font-size:16px;
 
-  font-size:15px;
+  font-weight:900;
 
   cursor:pointer;
 
 }
 
-.btn-guardar:hover{
-
-  background:
-    #0b8d59;
-
-}
-
 
 /* =========================================================
-   MENSAJE
+   CHECKOUT
 ========================================================= */
 
-.toast{
+.checkout{
+
+  display:none;
 
   position:fixed;
 
-  right:20px;
+  inset:0;
 
-  bottom:20px;
+  background:
+    rgba(0,0,0,.8);
 
   z-index:5000;
+
+  padding:20px;
+
+  overflow:auto;
+
+}
+
+.checkout-box{
+
+  max-width:600px;
+
+  margin:4% auto;
+
+  background:white;
+
+  border-radius:20px;
+
+  padding:28px;
+
+}
+
+.checkout-box h2{
+
+  font-size:27px;
+
+  margin-bottom:20px;
+
+}
+
+.resumen{
+
+  background:#f3f6f8;
+
+  padding:15px;
+
+  border-radius:10px;
+
+  margin-bottom:20px;
+
+}
+
+.resumen-linea{
+
+  display:flex;
+
+  justify-content:space-between;
+
+  padding:8px 0;
+
+  border-bottom:
+    1px solid #ddd;
+
+}
+
+.formulario label{
+
+  display:block;
+
+  margin-top:13px;
+
+  font-weight:bold;
+
+}
+
+.formulario input,
+.formulario textarea{
+
+  width:100%;
+
+  padding:12px;
+
+  margin-top:5px;
+
+  border:
+    1px solid #ccd3d9;
+
+  border-radius:8px;
+
+  font-family:Arial;
+
+}
+
+.formulario textarea{
+
+  min-height:90px;
+
+  resize:vertical;
+
+}
+
+.btn-enviar{
+
+  width:100%;
+
+  margin-top:20px;
+
+  padding:15px;
+
+  background:
+    var(--verde);
+
+  border:0;
+
+  color:white;
+
+  border-radius:9px;
+
+  font-size:16px;
+
+  font-weight:900;
+
+  cursor:pointer;
+
+}
+
+.btn-cerrar-checkout{
+
+  width:100%;
+
+  margin-top:10px;
+
+  padding:12px;
 
   background:
     var(--azul-oscuro);
 
   color:white;
 
-  padding:14px 18px;
+  border:0;
 
-  border-radius:10px;
+  border-radius:9px;
 
-  box-shadow:
-    0 10px 30px rgba(0,0,0,.25);
+  cursor:pointer;
 
-  display:none;
+}
+
+
+/* =========================================================
+   ESTADO VACÍO
+========================================================= */
+
+.vacio{
+
+  text-align:center;
+
+  padding:55px 20px;
+
+  background:white;
+
+  border-radius:18px;
+
+  border:
+    1px solid #e2e6e9;
+
+  color:#68727d;
+
+}
+
+.vacio h3{
+
+  color:var(--azul-oscuro);
+
+  margin-bottom:8px;
+
+}
+
+
+/* =========================================================
+   FOOTER
+========================================================= */
+
+footer{
+
+  background:
+    var(--azul-oscuro);
+
+  color:white;
+
+  text-align:center;
+
+  padding:40px 20px;
+
+  border-top:
+    5px solid var(--amarillo);
+
+}
+
+footer h3{
+
+  font-size:24px;
+
+  margin-bottom:8px;
+
+}
+
+footer p{
+
+  color:#bdccd8;
 
   font-size:13px;
+
+  margin:5px;
 
 }
 
@@ -985,75 +1343,173 @@ body{
 
 @media(max-width:700px){
 
-  .topbar{
+  .header-contenido{
 
-    padding:
-      12px 15px;
+    padding:13px 15px;
 
   }
 
-  .topbar h1{
+  .marca h1{
+
+    font-size:20px;
+
+  }
+
+  .marca p{
+
+    font-size:10px;
+
+  }
+
+  .logo-texto{
+
+    width:40px;
+
+    height:40px;
+
+    font-size:16px;
+
+  }
+
+  .hero{
+
+    margin:
+      15px;
+
+    padding:
+      42px 22px;
+
+  }
+
+  .hero h2{
+
+    font-size:43px;
+
+  }
+
+  .categorias{
+
+    padding:
+      0 15px;
+
+  }
+
+  .catalogo{
+
+    padding:
+      5px 15px 50px;
+
+  }
+
+  .productos{
+
+    grid-template-columns:
+      repeat(2,1fr);
+
+    gap:10px;
+
+  }
+
+  .producto-foto{
+
+    height:180px;
+
+  }
+
+  .producto-info{
+
+    padding:12px;
+
+  }
+
+  .producto-info h3{
+
+    font-size:15px;
+
+  }
+
+  .producto-info p{
+
+    font-size:11px;
+
+  }
+
+  .producto-precio{
 
     font-size:17px;
 
   }
 
-  .stats{
+  .btn-ordenar{
 
-    grid-template-columns:
-      1fr;
+    padding:10px 5px;
 
-  }
-
-  .acciones{
-
-    align-items:
-      stretch;
+    font-size:12px;
 
   }
 
-  .item{
+  .accesorio-foto{
 
-    align-items:
-      flex-start;
+    width:85px;
 
-  }
-
-  .item-imagen{
-
-    width:65px;
-
-    height:65px;
+    height:90px;
 
   }
 
-  .item-acciones{
+  .accesorio-info{
 
-    flex-direction:
-      column;
-
-  }
-
-  .form-grid{
-
-    grid-template-columns:
-      1fr;
+    padding:
+      10px;
 
   }
 
-  .campo.full{
+  .accesorio-info h3{
 
-    grid-column:
-      auto;
+    font-size:14px;
 
   }
 
-  .modal-box{
+  .accesorio-precio{
 
-    margin:
-      0 auto;
+    padding:8px;
 
-    padding:20px;
+    font-size:15px;
+
+  }
+
+  .accesorio-ordenar{
+
+    margin-right:8px;
+
+    padding:8px;
+
+    font-size:11px;
+
+  }
+
+  .detalle{
+
+    grid-template-columns:1fr;
+
+  }
+
+  .detalle img{
+
+    height:330px;
+
+  }
+
+  .detalle-info{
+
+    padding:22px;
+
+  }
+
+  .carrito{
+
+    width:100%;
+
+    max-width:100%;
 
   }
 
@@ -1068,83 +1524,16 @@ body{
 
 
 <!-- =====================================================
-     LOGIN
+     HEADER
 ===================================================== -->
 
-<section
-  class="login"
-  id="login">
+<header>
 
-  <div class="login-box">
+  <div class="header-contenido">
 
-    <div class="login-logo">
-      TD
-    </div>
+    <div class="marca">
 
-    <h1>
-      TROPIC DISTRICT
-    </h1>
-
-    <p>
-      Panel de administración
-    </p>
-
-
-    <form
-      onsubmit="iniciarSesion(event)">
-
-      <input
-        type="email"
-        id="email"
-        required
-        placeholder="Correo electrónico">
-
-
-      <input
-        type="password"
-        id="password"
-        required
-        placeholder="Contraseña">
-
-
-      <button
-        class="btn-login"
-        type="submit">
-
-        ENTRAR AL ADMINISTRADOR
-
-      </button>
-
-    </form>
-
-
-    <div
-      class="login-error"
-      id="loginError">
-
-    </div>
-
-  </div>
-
-</section>
-
-
-<!-- =====================================================
-     ADMIN
-===================================================== -->
-
-<section
-  class="admin"
-  id="admin">
-
-
-  <!-- HEADER -->
-
-  <header class="topbar">
-
-    <div class="topbar-marca">
-
-      <div class="logo-admin">
+      <div class="logo-texto">
         TD
       </div>
 
@@ -1154,9 +1543,9 @@ body{
           TROPIC DISTRICT
         </h1>
 
-        <small>
-          Administración de tienda
-        </small>
+        <p>
+          STREETWEAR • SNEAKERS • STYLE
+        </p>
 
       </div>
 
@@ -1164,102 +1553,83 @@ body{
 
 
     <button
-      class="btn-logout"
-      onclick="cerrarSesion()">
+      class="btn-carrito"
+      onclick="abrirCarrito()">
 
-      Cerrar sesión
+      🛒 Carrito
+
+      <span id="contador">
+        0
+      </span>
 
     </button>
 
-  </header>
+  </div>
+
+</header>
 
 
-  <!-- CONTENIDO -->
+<!-- =====================================================
+     HERO
+===================================================== -->
 
-  <main class="contenedor">
+<section class="hero">
 
+  <div class="hero-contenido">
 
-    <!-- ESTADISTICAS -->
+    <h2>
+      STREET<br>
+      <span>MEETS</span><br>
+      TROPICAL
+    </h2>
 
-    <div class="stats">
+    <p>
 
-      <div class="stat">
+      Sneakers, streetwear y accesorios
+      para moverte con tu propio estilo.
 
-        <span>
-          Productos
-        </span>
+      Una mezcla de ciudad, color,
+      playa y actitud.
 
-        <strong id="totalProductos">
-          0
-        </strong>
+    </p>
 
-      </div>
+    <span class="hero-frase">
+      MOVE YOUR WAY
+    </span>
 
-
-      <div class="stat">
-
-        <span>
-          Activos
-        </span>
-
-        <strong id="productosActivos">
-          0
-        </strong>
-
-      </div>
-
-
-      <div class="stat">
-
-        <span>
-          Categorías
-        </span>
-
-        <strong id="totalCategorias">
-          0
-        </strong>
-
-      </div>
-
-    </div>
-
-
-    <!-- ACCIONES -->
-
-    <div class="acciones">
-
-      <button
-        class="btn-principal"
-        onclick="abrirNuevoProducto()">
-
-        + AGREGAR PRODUCTO
-
-      </button>
-
-    </div>
-
-
-    <!-- BUSCAR -->
-
-    <input
-      class="busqueda"
-      id="busqueda"
-      type="search"
-      placeholder="Buscar producto, marca o categoría..."
-      oninput="filtrarProductos()">
-
-
-    <!-- LISTA -->
-
-    <div
-      class="lista"
-      id="listaProductos">
-
-    </div>
-
-  </main>
+  </div>
 
 </section>
+
+
+<!-- =====================================================
+     CATEGORIAS
+===================================================== -->
+
+<div
+  class="categorias"
+  id="categorias">
+
+</div>
+
+
+<!-- =====================================================
+     CATALOGO
+===================================================== -->
+
+<main class="catalogo">
+
+  <h2 class="titulo-seccion">
+    Catálogo
+  </h2>
+
+
+  <div
+    id="productos">
+
+  </div>
+
+</main>
 
 
 <!-- =====================================================
@@ -1270,287 +1640,61 @@ body{
   class="modal"
   id="modalProducto">
 
-  <div class="modal-box">
+  <div class="modal-producto">
+
+    <span
+      class="cerrar"
+      onclick="cerrarProducto()">
+
+      &times;
+
+    </span>
 
 
-    <div class="modal-header">
+    <div class="detalle">
 
-      <h2 id="modalTitulo">
-        Nuevo producto
-      </h2>
+      <img
+        id="detalleImagen"
+        src=""
+        alt="Producto">
 
-      <button
-        class="cerrar"
-        onclick="cerrarModal()">
 
-        &times;
+      <div class="detalle-info">
 
-      </button>
+        <div
+          class="detalle-marca"
+          id="detalleMarca">
+        </div>
+
+
+        <h2
+          id="detalleNombre">
+        </h2>
+
+
+        <p
+          class="detalle-descripcion"
+          id="detalleDescripcion">
+        </p>
+
+
+        <div
+          class="detalle-precio"
+          id="detallePrecio">
+        </div>
+
+
+        <button
+          class="agregar"
+          onclick="agregarDesdeDetalle()">
+
+          🛒 AGREGAR AL CARRITO
+
+        </button>
+
+      </div>
 
     </div>
-
-
-    <form
-      onsubmit="guardarProducto(event)"
-      id="formProducto">
-
-
-      <div class="form-grid">
-
-
-        <!-- NOMBRE -->
-
-        <div class="campo">
-
-          <label>
-            Nombre del producto
-          </label>
-
-          <input
-            type="text"
-            id="nombre"
-            required
-            placeholder="Ej. Air Street">
-
-        </div>
-
-
-        <!-- MARCA -->
-
-        <div class="campo">
-
-          <label>
-            Marca
-          </label>
-
-          <input
-            type="text"
-            id="marca"
-            placeholder="Nike, Adidas, Reebok...">
-
-        </div>
-
-
-        <!-- CATEGORIA -->
-
-        <div class="campo">
-
-          <label>
-            Categoría
-          </label>
-
-          <select
-            id="categoria"
-            onchange="cambiarCategoria()"
-            required>
-
-            <option value="">
-              Seleccionar categoría
-            </option>
-
-            <option value="Sneakers">
-              Sneakers
-            </option>
-
-            <option value="T-Shirts">
-              T-Shirts
-            </option>
-
-            <option value="Caps">
-              Caps
-            </option>
-
-            <option value="Bags">
-              Bags
-            </option>
-
-            <option value="Accessories">
-              Accessories
-            </option>
-
-            <option value="Featured">
-              Featured
-            </option>
-
-            <option value="New Arrivals">
-              New Arrivals
-            </option>
-
-          </select>
-
-        </div>
-
-
-        <!-- PRECIO -->
-
-        <div class="campo">
-
-          <label>
-            Precio
-          </label>
-
-          <input
-            type="number"
-            id="precio"
-            min="0"
-            step="1"
-            required
-            placeholder="$">
-
-        </div>
-
-
-        <!-- DESCRIPCION -->
-
-        <div class="campo full">
-
-          <label>
-            Descripción
-          </label>
-
-          <textarea
-            id="descripcion"
-            placeholder="Descripción del producto...">
-          </textarea>
-
-        </div>
-
-
-      </div>
-
-
-      <!-- ACCESORIOS -->
-
-      <div
-        class="accesorios-extra"
-        id="accesoriosExtra">
-
-        <h3>
-          ACCESSORIES
-        </h3>
-
-
-        <div class="form-grid">
-
-
-          <div class="campo">
-
-            <label>
-              Tipo
-            </label>
-
-            <select
-              id="tipo">
-
-              <option value="">
-                Seleccionar
-              </option>
-
-              <option>
-                Aretes
-              </option>
-
-              <option>
-                Dije
-              </option>
-
-              <option>
-                Pin
-              </option>
-
-              <option>
-                Pulsera
-              </option>
-
-              <option>
-                Collar
-              </option>
-
-              <option>
-                Anillo
-              </option>
-
-              <option>
-                Charm
-              </option>
-
-              <option>
-                Otro
-              </option>
-
-            </select>
-
-          </div>
-
-
-          <div class="campo">
-
-            <label>
-              Material
-            </label>
-
-            <input
-              type="text"
-              id="material"
-              placeholder="Acero inoxidable, metal...">
-
-          </div>
-
-
-        </div>
-
-      </div>
-
-
-      <!-- FOTO -->
-
-      <div class="foto-area">
-
-        <img
-          id="fotoPreview"
-          class="foto-preview"
-          alt="Vista previa">
-
-
-        <label>
-
-          <strong>
-            FOTO DEL PRODUCTO
-          </strong>
-
-          <br><br>
-
-          Selecciona una foto desde
-          tu celular o computadora.
-
-        </label>
-
-
-        <br><br>
-
-
-        <input
-          class="input-foto"
-          type="file"
-          id="foto"
-          accept="image/*"
-          onchange="previsualizarFoto()">
-
-      </div>
-
-
-      <!-- GUARDAR -->
-
-      <button
-        class="btn-guardar"
-        type="submit">
-
-        GUARDAR PRODUCTO
-
-      </button>
-
-
-    </form>
 
   </div>
 
@@ -1558,54 +1702,188 @@ body{
 
 
 <!-- =====================================================
-     TOAST
+     CARRITO
+===================================================== -->
+
+<aside
+  class="carrito"
+  id="carrito">
+
+  <div class="carrito-header">
+
+    <h2>
+      Mi pedido
+    </h2>
+
+    <span
+      class="cerrar-carrito"
+      onclick="cerrarCarrito()">
+
+      &times;
+
+    </span>
+
+  </div>
+
+
+  <div
+    class="carrito-items"
+    id="carritoItems">
+
+    <p
+      style="
+      text-align:center;
+      color:#777;
+      padding:30px">
+
+      Tu carrito está vacío.
+
+    </p>
+
+  </div>
+
+
+  <div class="carrito-footer">
+
+    <div class="total">
+
+      <span>
+        Total:
+      </span>
+
+      <span id="total">
+        $0 MXN
+      </span>
+
+    </div>
+
+
+    <button
+      class="btn-revisar"
+      onclick="abrirCheckout()">
+
+      REVISAR PEDIDO
+
+    </button>
+
+  </div>
+
+</aside>
+
+
+<!-- =====================================================
+     CHECKOUT
 ===================================================== -->
 
 <div
-  class="toast"
-  id="toast">
+  class="checkout"
+  id="checkout">
+
+  <div class="checkout-box">
+
+    <h2>
+      Revisar pedido
+    </h2>
+
+
+    <div
+      class="resumen"
+      id="resumen">
+
+    </div>
+
+
+    <form
+      class="formulario"
+      onsubmit="enviarPedido(event)">
+
+
+      <label>
+        Nombre
+      </label>
+
+      <input
+        type="text"
+        id="cliente"
+        required
+        placeholder="Tu nombre">
+
+
+      <label>
+        Teléfono
+      </label>
+
+      <input
+        type="tel"
+        id="telefono"
+        required
+        placeholder="Tu teléfono">
+
+
+      <label>
+        Observaciones
+      </label>
+
+      <textarea
+        id="observaciones"
+        placeholder="Alguna indicación para tu pedido...">
+      </textarea>
+
+
+      <button
+        class="btn-enviar"
+        type="submit">
+
+        📲 ENVIAR PEDIDO POR WHATSAPP
+
+      </button>
+
+    </form>
+
+
+    <button
+      class="btn-cerrar-checkout"
+      onclick="cerrarCheckout()">
+
+      Regresar al catálogo
+
+    </button>
+
+  </div>
 
 </div>
+
+
+<!-- =====================================================
+     FOOTER
+===================================================== -->
+
+<footer>
+
+  <h3>
+    TROPIC DISTRICT
+  </h3>
+
+  <p>
+    STREETWEAR • SNEAKERS • STYLE
+  </p>
+
+  <p>
+    Pedidos por WhatsApp
+  </p>
+
+</footer>
 
 
 <script>
 
 
 /* =========================================================
-   SUPABASE
+   CONFIGURACIÓN
 ========================================================= */
 
-/*
-  IMPORTANTE:
-
-  AQUÍ PONDREMOS DESPUÉS LAS CREDENCIALES
-  EXCLUSIVAS DE TROPIC DISTRICT.
-
-  NO UTILIZAR LAS DE RUSTI-K.
-*/
-
-const SUPABASE_URL =
-  "";
-
-const SUPABASE_ANON_KEY =
-  "";
-
-
-let supabaseClient = null;
-
-
-if(
-  SUPABASE_URL &&
-  SUPABASE_ANON_KEY
-){
-
-  supabaseClient =
-    window.supabase.createClient(
-      SUPABASE_URL,
-      SUPABASE_ANON_KEY
-    );
-
-}
+const WHATSAPP =
+  "523221340289";
 
 
 /* =========================================================
@@ -1614,261 +1892,184 @@ if(
 
 let productos = [];
 
-let productoEditando = null;
+let carrito = [];
+
+let productoActual = null;
 
 
 /* =========================================================
-   LOGIN
+   ESCAPAR HTML
 ========================================================= */
 
-async function iniciarSesion(e){
+function escaparHTML(valor){
 
-  e.preventDefault();
-
-
-  if(!supabaseClient){
-
-    mostrarErrorLogin(
-      "Primero debemos conectar la base de datos de Tropic District."
-    );
-
-    return;
-
-  }
-
-
-  const email =
-    document.getElementById(
-      "email"
-    ).value.trim();
-
-
-  const password =
-    document.getElementById(
-      "password"
-    ).value;
-
-
-  const {
-    error
-  } =
-    await supabaseClient
-      .auth
-      .signInWithPassword({
-
-        email,
-        password
-
-      });
-
-
-  if(error){
-
-    mostrarErrorLogin(
-      error.message
-    );
-
-    return;
-
-  }
-
-
-  mostrarAdmin();
+  return String(valor ?? "")
+    .replace(/&/g,"&amp;")
+    .replace(/</g,"&lt;")
+    .replace(/>/g,"&gt;")
+    .replace(/"/g,"&quot;")
+    .replace(/'/g,"&#039;");
 
 }
 
 
 /* =========================================================
-   ERROR LOGIN
+   CATEGORIAS
 ========================================================= */
 
-function mostrarErrorLogin(
-  mensaje
-){
+function obtenerCategorias(){
 
-  const caja =
-    document.getElementById(
-      "loginError"
-    );
-
-
-  caja.textContent =
-    mensaje;
-
-
-  caja.style.display =
-    "block";
-
-}
-
-
-/* =========================================================
-   MOSTRAR ADMIN
-========================================================= */
-
-function mostrarAdmin(){
-
-  document.getElementById(
-    "login"
-  ).style.display =
-    "none";
-
-
-  document.getElementById(
-    "admin"
-  ).style.display =
-    "block";
-
-
-  cargarProductos();
-
-}
-
-
-/* =========================================================
-   CERRAR SESION
-========================================================= */
-
-async function cerrarSesion(){
-
-  if(supabaseClient){
-
-    await supabaseClient
-      .auth
-      .signOut();
-
-  }
-
-
-  location.reload();
-
-}
-
-
-/* =========================================================
-   COMPROBAR SESION
-========================================================= */
-
-async function comprobarSesion(){
-
-  if(!supabaseClient){
-
-    return;
-
-  }
-
-
-  const {
-    data
-  } =
-    await supabaseClient
-      .auth
-      .getSession();
-
-
-  if(
-    data &&
-    data.session
-  ){
-
-    mostrarAdmin();
-
-  }
-
-}
-
-
-/* =========================================================
-   CARGAR PRODUCTOS
-========================================================= */
-
-async function cargarProductos(){
-
-  if(!supabaseClient){
-
-    return;
-
-  }
-
-
-  const {
-    data,
-    error
-  } =
-    await supabaseClient
-      .from(
-        "tropic_products"
+  const categorias =
+    [
+      ...new Set(
+        productos
+          .map(p => p.categoria)
+          .filter(Boolean)
       )
-      .select("*")
-      .order(
-        "id",
-        {
-          ascending:true
-        }
+    ];
+
+  return categorias;
+
+}
+
+
+function mostrarCategorias(){
+
+  const contenedor =
+    document.getElementById(
+      "categorias"
+    );
+
+  contenedor.innerHTML = "";
+
+
+  if(!productos.length){
+
+    return;
+
+  }
+
+
+  const botonTodos =
+    document.createElement("button");
+
+  botonTodos.className =
+    "categoria-btn activa";
+
+  botonTodos.textContent =
+    "Todos";
+
+  botonTodos.onclick =
+    () => {
+
+      document
+        .querySelectorAll(".categoria-btn")
+        .forEach(
+          b =>
+            b.classList.remove(
+              "activa"
+            )
+        );
+
+      botonTodos.classList.add(
+        "activa"
       );
 
+      mostrarProductos(
+        productos
+      );
 
-  if(error){
-
-    mostrarToast(
-      "Error cargando productos."
-    );
-
-    console.error(
-      error
-    );
-
-    return;
-
-  }
+    };
 
 
-  productos =
-    data || [];
+  contenedor.appendChild(
+    botonTodos
+  );
 
 
-  mostrarLista();
+  obtenerCategorias()
+    .forEach(categoria => {
 
-  actualizarEstadisticas();
+      const boton =
+        document.createElement(
+          "button"
+        );
+
+      boton.className =
+        "categoria-btn";
+
+      boton.textContent =
+        categoria;
+
+      boton.onclick =
+        () => {
+
+          document
+            .querySelectorAll(
+              ".categoria-btn"
+            )
+            .forEach(
+              b =>
+                b.classList.remove(
+                  "activa"
+                )
+            );
+
+          boton.classList.add(
+            "activa"
+          );
+
+          mostrarProductos(
+            productos.filter(
+              p =>
+                p.categoria ===
+                categoria
+            )
+          );
+
+        };
+
+
+      contenedor.appendChild(
+        boton
+      );
+
+    });
 
 }
 
 
 /* =========================================================
-   LISTA
+   MOSTRAR PRODUCTOS
 ========================================================= */
 
-function mostrarLista(
+function mostrarProductos(
   lista = productos
 ){
 
   const contenedor =
     document.getElementById(
-      "listaProductos"
+      "productos"
     );
 
 
-  contenedor.innerHTML =
-    "";
+  contenedor.innerHTML = "";
 
 
   if(!lista.length){
 
     contenedor.innerHTML = `
 
-      <div class="item">
+      <div class="vacio">
 
-        <div class="item-info">
+        <h3>
+          Próximamente
+        </h3>
 
-          <h3>
-            No hay productos todavía
-          </h3>
-
-          <p>
-            Agrega tu primer producto.
-          </p>
-
-        </div>
+        <p>
+          Estamos preparando nuevos productos
+          para Tropic District.
+        </p>
 
       </div>
 
@@ -1879,280 +2080,367 @@ function mostrarLista(
   }
 
 
-  lista.forEach(
-    producto => {
-
-      const div =
-        document.createElement(
-          "div"
-        );
-
-
-      div.className =
-        "item";
-
-
-      const imagen =
-        producto.imagen ||
-        "";
-
-
-      div.innerHTML = `
-
-        ${
-          imagen
-          ?
-          `<img
-            class="item-imagen"
-            src="${imagen}"
-            alt="${producto.nombre || ""}">`
-          :
-          `<div
-            class="item-imagen">
-          </div>`
-        }
-
-
-        <div class="item-info">
-
-          <span class="item-categoria">
-
-            ${producto.categoria || ""}
-
-          </span>
-
-
-          <h3>
-
-            ${producto.nombre || ""}
-
-          </h3>
-
-
-          <p>
-
-            ${producto.marca || ""}
-
-          </p>
-
-
-          <div class="item-precio">
-
-            $${Number(
-              producto.precio || 0
-            ).toLocaleString()}
-            MXN
-
-          </div>
-
-        </div>
-
-
-        <div class="item-acciones">
-
-          <button
-            class="btn-editar"
-            onclick="editarProducto(${producto.id})">
-
-            EDITAR
-
-          </button>
-
-
-          <button
-            class="btn-estado ${
-              producto.activo
-              ? ""
-              : "inactivo"
-            }"
-            onclick="cambiarEstado(${producto.id},${producto.activo})">
-
-            ${
-              producto.activo
-              ?
-              "DESACTIVAR"
-              :
-              "ACTIVAR"
-            }
-
-          </button>
-
-
-          <button
-            class="btn-eliminar"
-            onclick="eliminarProducto(${producto.id})">
-
-            ELIMINAR
-
-          </button>
-
-        </div>
-
-      `;
-
-
-      contenedor.appendChild(
-        div
-      );
-
-    }
-  );
-
-}
-
-
-/* =========================================================
-   ESTADISTICAS
-========================================================= */
-
-function actualizarEstadisticas(){
-
-  document.getElementById(
-    "totalProductos"
-  ).textContent =
-    productos.length;
-
-
-  document.getElementById(
-    "productosActivos"
-  ).textContent =
-    productos.filter(
+  const accesorios =
+    lista.filter(
       p =>
-        p.activo
-    ).length;
-
-
-  const categorias =
-    new Set(
-      productos
-        .map(
-          p =>
-            p.categoria
-        )
-        .filter(Boolean)
+        String(
+          p.categoria
+        ).toLowerCase()
+        === "accessories"
     );
 
 
-  document.getElementById(
-    "totalCategorias"
-  ).textContent =
-    categorias.size;
-
-}
-
-
-/* =========================================================
-   BUSCAR
-========================================================= */
-
-function filtrarProductos(){
-
-  const texto =
-    document.getElementById(
-      "busqueda"
-    ).value
-      .toLowerCase()
-      .trim();
+  const normales =
+    lista.filter(
+      p =>
+        String(
+          p.categoria
+        ).toLowerCase()
+        !== "accessories"
+    );
 
 
-  if(!texto){
+  if(normales.length){
 
-    mostrarLista();
+    const grid =
+      document.createElement(
+        "div"
+      );
 
-    return;
+    grid.className =
+      "productos";
+
+
+    normales.forEach(
+      producto => {
+
+        grid.appendChild(
+          crearProducto(
+            producto
+          )
+        );
+
+      }
+    );
+
+
+    contenedor.appendChild(
+      grid
+    );
 
   }
 
 
-  const filtrados =
-    productos.filter(
-      p =>
+  if(accesorios.length){
 
-        String(
-          p.nombre || ""
-        )
-        .toLowerCase()
-        .includes(texto)
+    const titulo =
+      document.createElement(
+        "h2"
+      );
 
-        ||
+    titulo.className =
+      "titulo-seccion";
 
-        String(
-          p.marca || ""
-        )
-        .toLowerCase()
-        .includes(texto)
+    titulo.textContent =
+      "Accessories";
 
-        ||
-
-        String(
-          p.categoria || ""
-        )
-        .toLowerCase()
-        .includes(texto)
-
+    contenedor.appendChild(
+      titulo
     );
 
 
-  mostrarLista(
-    filtrados
-  );
+    const listaAccesorios =
+      document.createElement(
+        "div"
+      );
+
+    listaAccesorios.className =
+      "accesorios";
+
+
+    accesorios.forEach(
+      producto => {
+
+        listaAccesorios.appendChild(
+          crearAccesorio(
+            producto
+          )
+        );
+
+      }
+    );
+
+
+    contenedor.appendChild(
+      listaAccesorios
+    );
+
+  }
 
 }
 
 
 /* =========================================================
-   NUEVO PRODUCTO
+   CREAR PRODUCTO
 ========================================================= */
 
-function abrirNuevoProducto(){
+function crearProducto(
+  producto
+){
 
-  productoEditando =
-    null;
+  const div =
+    document.createElement(
+      "article"
+    );
 
-
-  document.getElementById(
-    "modalTitulo"
-  ).textContent =
-    "Nuevo producto";
-
-
-  document.getElementById(
-    "formProducto"
-  ).reset();
+  div.className =
+    "producto";
 
 
-  document.getElementById(
-    "fotoPreview"
-  ).style.display =
-    "none";
+  const imagen =
+    escaparHTML(
+      producto.imagen ||
+      ""
+    );
 
 
-  document.getElementById(
-    "fotoPreview"
-  ).src =
-    "";
+  const marca =
+    escaparHTML(
+      producto.marca ||
+      ""
+    );
 
 
-  cambiarCategoria();
+  const nombre =
+    escaparHTML(
+      producto.nombre ||
+      "Producto"
+    );
 
 
-  document.getElementById(
-    "modalProducto"
-  ).style.display =
-    "block";
+  const descripcion =
+    escaparHTML(
+      producto.descripcion ||
+      ""
+    );
+
+
+  const precio =
+    Number(
+      producto.precio || 0
+    );
+
+
+  div.innerHTML = `
+
+    <img
+      class="producto-foto"
+      src="${imagen}"
+      alt="${nombre}"
+      onclick="abrirFoto('${imagen}')">
+
+
+    <div class="producto-info">
+
+      ${
+        marca
+        ?
+        `<div class="producto-marca">
+          ${marca}
+        </div>`
+        :
+        ""
+      }
+
+
+      <h3>
+        ${nombre}
+      </h3>
+
+
+      <p>
+        ${descripcion}
+      </p>
+
+
+      <div class="producto-precio">
+
+        $${precio.toLocaleString()}
+        MXN
+
+      </div>
+
+
+      <button
+        class="btn-ordenar"
+        onclick="event.stopPropagation(); abrirProducto(${producto.id})">
+
+        ORDENAR
+
+      </button>
+
+    </div>
+
+  `;
+
+
+  div.onclick =
+    e => {
+
+      if(
+        e.target.tagName
+        !== "BUTTON" &&
+        !e.target.classList.contains(
+          "producto-foto"
+        )
+      ){
+
+        abrirProducto(
+          producto.id
+        );
+
+      }
+
+    };
+
+
+  return div;
 
 }
 
 
 /* =========================================================
-   EDITAR PRODUCTO
+   CREAR ACCESORIO
 ========================================================= */
 
-function editarProducto(
+function crearAccesorio(
+  producto
+){
+
+  const div =
+    document.createElement(
+      "article"
+    );
+
+  div.className =
+    "accesorio";
+
+
+  const imagen =
+    escaparHTML(
+      producto.imagen ||
+      ""
+    );
+
+
+  const nombre =
+    escaparHTML(
+      producto.nombre ||
+      "Accesorio"
+    );
+
+
+  const tipo =
+    escaparHTML(
+      producto.tipo ||
+      "Accessory"
+    );
+
+
+  const material =
+    escaparHTML(
+      producto.material ||
+      ""
+    );
+
+
+  const precio =
+    Number(
+      producto.precio || 0
+    );
+
+
+  div.innerHTML = `
+
+    <img
+      class="accesorio-foto"
+      src="${imagen}"
+      alt="${nombre}"
+      onclick="abrirFoto('${imagen}')">
+
+
+    <div class="accesorio-info">
+
+      <div class="accesorio-tipo">
+        ${tipo}
+      </div>
+
+
+      <h3>
+        ${nombre}
+      </h3>
+
+
+      <p>
+        ${material}
+      </p>
+
+    </div>
+
+
+    <div class="accesorio-precio">
+
+      $${precio.toLocaleString()}
+      MXN
+
+    </div>
+
+
+    <button
+      class="accesorio-ordenar"
+      onclick="event.stopPropagation(); abrirProducto(${producto.id})">
+
+      ORDENAR
+
+    </button>
+
+  `;
+
+
+  div.onclick =
+    e => {
+
+      if(
+        e.target.tagName
+        !== "BUTTON" &&
+        !e.target.classList.contains(
+          "accesorio-foto"
+        )
+      ){
+
+        abrirProducto(
+          producto.id
+        );
+
+      }
+
+    };
+
+
+  return div;
+
+}
+
+
+/* =========================================================
+   ABRIR PRODUCTO
+========================================================= */
+
+function abrirProducto(
   id
 ){
 
-  const producto =
+  productoActual =
     productos.find(
       p =>
         Number(p.id) ===
@@ -2160,89 +2448,49 @@ function editarProducto(
     );
 
 
-  if(!producto){
+  if(!productoActual){
 
     return;
 
   }
 
 
-  productoEditando =
-    producto;
+  document.getElementById(
+    "detalleImagen"
+  ).src =
+    productoActual.imagen ||
+    "";
 
 
   document.getElementById(
-    "modalTitulo"
+    "detalleMarca"
   ).textContent =
-    "Editar producto";
-
-
-  document.getElementById(
-    "nombre"
-  ).value =
-    producto.nombre ||
+    productoActual.marca ||
     "";
 
 
   document.getElementById(
-    "marca"
-  ).value =
-    producto.marca ||
+    "detalleNombre"
+  ).textContent =
+    productoActual.nombre ||
+    "Producto";
+
+
+  document.getElementById(
+    "detalleDescripcion"
+  ).textContent =
+    productoActual.descripcion ||
     "";
 
 
   document.getElementById(
-    "categoria"
-  ).value =
-    producto.categoria ||
-    "";
-
-
-  document.getElementById(
-    "precio"
-  ).value =
-    producto.precio ||
-    "";
-
-
-  document.getElementById(
-    "descripcion"
-  ).value =
-    producto.descripcion ||
-    "";
-
-
-  document.getElementById(
-    "tipo"
-  ).value =
-    producto.tipo ||
-    "";
-
-
-  document.getElementById(
-    "material"
-  ).value =
-    producto.material ||
-    "";
-
-
-  if(producto.imagen){
-
-    document.getElementById(
-      "fotoPreview"
-    ).src =
-      producto.imagen;
-
-
-    document.getElementById(
-      "fotoPreview"
-    ).style.display =
-      "block";
-
-  }
-
-
-  cambiarCategoria();
+    "detallePrecio"
+  ).textContent =
+    "$" +
+    Number(
+      productoActual.precio || 0
+    ).toLocaleString() +
+    " MXN";
 
 
   document.getElementById(
@@ -2254,555 +2502,693 @@ function editarProducto(
 
 
 /* =========================================================
-   CATEGORIA
+   ABRIR FOTO
 ========================================================= */
 
-function cambiarCategoria(){
+function abrirFoto(
+  imagen
+){
 
-  const categoria =
-    document.getElementById(
-      "categoria"
-    ).value;
-
-
-  const extras =
-    document.getElementById(
-      "accesoriosExtra"
-    );
-
-
-  if(
-    categoria ===
-    "Accessories"
-  ){
-
-    extras.style.display =
-      "block";
-
-  }else{
-
-    extras.style.display =
-      "none";
-
-  }
-
-}
-
-
-/* =========================================================
-   PREVISUALIZAR FOTO
-========================================================= */
-
-function previsualizarFoto(){
-
-  const archivo =
-    document.getElementById(
-      "foto"
-    ).files[0];
-
-
-  if(!archivo){
+  if(!imagen){
 
     return;
 
   }
 
 
-  const url =
-    URL.createObjectURL(
-      archivo
-    );
-
-
-  const preview =
+  const modal =
     document.getElementById(
-      "fotoPreview"
+      "modalProducto"
     );
 
 
-  preview.src =
-    url;
+  const img =
+    document.getElementById(
+      "detalleImagen"
+    );
 
 
-  preview.style.display =
+  img.src =
+    imagen;
+
+
+  document.getElementById(
+    "detalleMarca"
+  ).textContent =
+    "";
+
+
+  document.getElementById(
+    "detalleNombre"
+  ).textContent =
+    "";
+
+
+  document.getElementById(
+    "detalleDescripcion"
+  ).textContent =
+    "";
+
+
+  document.getElementById(
+    "detallePrecio"
+  ).textContent =
+    "";
+
+
+  modal.style.display =
     "block";
 
 }
 
 
 /* =========================================================
-   SUBIR IMAGEN
+   CERRAR PRODUCTO
 ========================================================= */
 
-async function subirImagen(
-  archivo
-){
-
-  if(!archivo){
-
-    return null;
-
-  }
-
-
-  const extension =
-    archivo.name
-      .split(".")
-      .pop()
-      .toLowerCase();
-
-
-  const nombreSeguro =
-
-    "producto-" +
-
-    Date.now() +
-
-    "-" +
-
-    Math.random()
-      .toString(36)
-      .substring(2,8) +
-
-    "." +
-
-    extension;
-
-
-  const ruta =
-    nombreSeguro;
-
-
-  const {
-    error
-  } =
-    await supabaseClient
-      .storage
-      .from(
-        "tropic-products"
-      )
-      .upload(
-        ruta,
-        archivo,
-        {
-
-          cacheControl:
-            "3600",
-
-          upsert:false
-
-        }
-      );
-
-
-  if(error){
-
-    throw error;
-
-  }
-
-
-  const {
-    data
-  } =
-    supabaseClient
-      .storage
-      .from(
-        "tropic-products"
-      )
-      .getPublicUrl(
-        ruta
-      );
-
-
-  return data.publicUrl;
-
-}
-
-
-/* =========================================================
-   GUARDAR PRODUCTO
-========================================================= */
-
-async function guardarProducto(
-  e
-){
-
-  e.preventDefault();
-
-
-  if(!supabaseClient){
-
-    mostrarToast(
-      "Primero debemos conectar Supabase."
-    );
-
-    return;
-
-  }
-
-
-  const nombre =
-    document.getElementById(
-      "nombre"
-    ).value.trim();
-
-
-  const marca =
-    document.getElementById(
-      "marca"
-    ).value.trim();
-
-
-  const categoria =
-    document.getElementById(
-      "categoria"
-    ).value;
-
-
-  const precio =
-    Number(
-      document.getElementById(
-        "precio"
-      ).value
-    );
-
-
-  const descripcion =
-    document.getElementById(
-      "descripcion"
-    ).value.trim();
-
-
-  const tipo =
-    document.getElementById(
-      "tipo"
-    ).value;
-
-
-  const material =
-    document.getElementById(
-      "material"
-    ).value.trim();
-
-
-  const archivo =
-    document.getElementById(
-      "foto"
-    ).files[0];
-
-
-  let imagen =
-    productoEditando
-      ? productoEditando.imagen || null
-      : null;
-
-
-  try{
-
-
-    if(archivo){
-
-      imagen =
-        await subirImagen(
-          archivo
-        );
-
-    }
-
-
-    const datos = {
-
-      nombre,
-
-      marca,
-
-      categoria,
-
-      precio,
-
-      descripcion,
-
-      imagen,
-
-      tipo:
-        categoria ===
-        "Accessories"
-        ? tipo
-        : null,
-
-      material:
-        categoria ===
-        "Accessories"
-        ? material
-        : null,
-
-      activo:
-        productoEditando
-        ? productoEditando.activo
-        : true
-
-    };
-
-
-    if(productoEditando){
-
-      const {
-        error
-      } =
-        await supabaseClient
-          .from(
-            "tropic_products"
-          )
-          .update(
-            datos
-          )
-          .eq(
-            "id",
-            productoEditando.id
-          );
-
-
-      if(error){
-
-        throw error;
-
-      }
-
-
-      mostrarToast(
-        "Producto actualizado ✓"
-      );
-
-    }else{
-
-      const {
-        error
-      } =
-        await supabaseClient
-          .from(
-            "tropic_products"
-          )
-          .insert(
-            [datos]
-          );
-
-
-      if(error){
-
-        throw error;
-
-      }
-
-
-      mostrarToast(
-        "Producto agregado ✓"
-      );
-
-    }
-
-
-    cerrarModal();
-
-    cargarProductos();
-
-
-  }
-  catch(error){
-
-    console.error(
-      error
-    );
-
-
-    mostrarToast(
-      "No se pudo guardar el producto."
-    );
-
-  }
-
-}
-
-
-/* =========================================================
-   CAMBIAR ESTADO
-========================================================= */
-
-async function cambiarEstado(
-  id,
-  estadoActual
-){
-
-  if(!supabaseClient){
-
-    return;
-
-  }
-
-
-  const {
-    error
-  } =
-    await supabaseClient
-      .from(
-        "tropic_products"
-      )
-      .update({
-
-        activo:
-          !estadoActual
-
-      })
-      .eq(
-        "id",
-        id
-      );
-
-
-  if(error){
-
-    mostrarToast(
-      "No se pudo cambiar el estado."
-    );
-
-    return;
-
-  }
-
-
-  mostrarToast(
-    estadoActual
-    ?
-    "Producto desactivado"
-    :
-    "Producto activado"
-  );
-
-
-  cargarProductos();
-
-}
-
-
-/* =========================================================
-   ELIMINAR
-========================================================= */
-
-async function eliminarProducto(
-  id
-){
-
-  if(
-    !confirm(
-      "¿Seguro que deseas eliminar este producto?"
-    )
-  ){
-
-    return;
-
-  }
-
-
-  if(!supabaseClient){
-
-    return;
-
-  }
-
-
-  const {
-    error
-  } =
-    await supabaseClient
-      .from(
-        "tropic_products"
-      )
-      .delete()
-      .eq(
-        "id",
-        id
-      );
-
-
-  if(error){
-
-    mostrarToast(
-      "No se pudo eliminar."
-    );
-
-    return;
-
-  }
-
-
-  mostrarToast(
-    "Producto eliminado"
-  );
-
-
-  cargarProductos();
-
-}
-
-
-/* =========================================================
-   CERRAR MODAL
-========================================================= */
-
-function cerrarModal(){
+function cerrarProducto(){
 
   document.getElementById(
     "modalProducto"
   ).style.display =
     "none";
 
+}
 
-  productoEditando =
-    null;
+
+/* =========================================================
+   AGREGAR AL CARRITO
+========================================================= */
+
+function agregarDesdeDetalle(){
+
+  if(!productoActual){
+
+    return;
+
+  }
+
+
+  const existente =
+    carrito.find(
+      item =>
+        Number(item.id) ===
+        Number(productoActual.id)
+    );
+
+
+  if(existente){
+
+    existente.cantidad += 1;
+
+  }else{
+
+    carrito.push({
+
+      ...productoActual,
+
+      cantidad:1
+
+    });
+
+  }
+
+
+  cerrarProducto();
+
+  actualizarCarrito();
+
+  abrirCarrito();
 
 }
 
 
 /* =========================================================
-   TOAST
+   ACTUALIZAR CARRITO
 ========================================================= */
 
-function mostrarToast(
-  mensaje
-){
+function actualizarCarrito(){
 
-  const toast =
+  const contenedor =
     document.getElementById(
-      "toast"
+      "carritoItems"
     );
 
 
-  toast.textContent =
-    mensaje;
+  const contador =
+    document.getElementById(
+      "contador"
+    );
 
 
-  toast.style.display =
+  let totalCantidad = 0;
+
+  let total = 0;
+
+
+  if(!carrito.length){
+
+    contenedor.innerHTML = `
+
+      <p style="
+        text-align:center;
+        color:#777;
+        padding:30px">
+
+        Tu carrito está vacío.
+
+      </p>
+
+    `;
+
+  }else{
+
+    contenedor.innerHTML = "";
+
+
+    carrito.forEach(
+      item => {
+
+        const cantidad =
+          Number(
+            item.cantidad
+          );
+
+
+        const precio =
+          Number(
+            item.precio || 0
+          );
+
+
+        const subtotal =
+          precio *
+          cantidad;
+
+
+        totalCantidad +=
+          cantidad;
+
+
+        total +=
+          subtotal;
+
+
+        const div =
+          document.createElement(
+            "div"
+          );
+
+
+        div.className =
+          "carrito-item";
+
+
+        div.innerHTML = `
+
+          <h4>
+            ${escaparHTML(
+              item.nombre
+            )}
+          </h4>
+
+
+          <small>
+            $${precio.toLocaleString()}
+            MXN por unidad
+          </small>
+
+
+          <div class="item-controles">
+
+            <button
+              onclick="cambiarCarrito(${item.id},-1)">
+              −
+            </button>
+
+
+            <span>
+              ${cantidad}
+            </span>
+
+
+            <button
+              onclick="cambiarCarrito(${item.id},1)">
+              +
+            </button>
+
+
+            <button
+              class="eliminar"
+              onclick="eliminarProducto(${item.id})">
+              ×
+            </button>
+
+          </div>
+
+
+          <p style="
+            margin-top:7px;
+            font-weight:bold;">
+
+            Subtotal:
+            $${subtotal.toLocaleString()}
+            MXN
+
+          </p>
+
+        `;
+
+
+        contenedor.appendChild(
+          div
+        );
+
+      }
+    );
+
+  }
+
+
+  contador.textContent =
+    totalCantidad;
+
+
+  document.getElementById(
+    "total"
+  ).textContent =
+    "$" +
+    total.toLocaleString() +
+    " MXN";
+
+}
+
+
+/* =========================================================
+   CARRITO
+========================================================= */
+
+function abrirCarrito(){
+
+  document
+    .getElementById(
+      "carrito"
+    )
+    .classList.add(
+      "abierto"
+    );
+
+}
+
+
+function cerrarCarrito(){
+
+  document
+    .getElementById(
+      "carrito"
+    )
+    .classList.remove(
+      "abierto"
+    );
+
+}
+
+
+function cambiarCarrito(
+  id,
+  cambio
+){
+
+  const item =
+    carrito.find(
+      p =>
+        Number(p.id) ===
+        Number(id)
+    );
+
+
+  if(!item){
+
+    return;
+
+  }
+
+
+  item.cantidad +=
+    cambio;
+
+
+  if(
+    item.cantidad <= 0
+  ){
+
+    carrito =
+      carrito.filter(
+        p =>
+          Number(p.id) !==
+          Number(id)
+      );
+
+  }
+
+
+  actualizarCarrito();
+
+}
+
+
+function eliminarProducto(
+  id
+){
+
+  carrito =
+    carrito.filter(
+      p =>
+        Number(p.id) !==
+        Number(id)
+    );
+
+
+  actualizarCarrito();
+
+}
+
+
+/* =========================================================
+   CHECKOUT
+========================================================= */
+
+function abrirCheckout(){
+
+  if(!carrito.length){
+
+    alert(
+      "Agrega al menos un producto al carrito."
+    );
+
+    return;
+
+  }
+
+
+  const resumen =
+    document.getElementById(
+      "resumen"
+    );
+
+
+  let html = "";
+
+  let total = 0;
+
+
+  carrito.forEach(
+    item => {
+
+      const subtotal =
+        Number(
+          item.precio || 0
+        ) *
+        Number(
+          item.cantidad
+        );
+
+
+      total +=
+        subtotal;
+
+
+      html += `
+
+        <div class="resumen-linea">
+
+          <span>
+            ${escaparHTML(
+              item.nombre
+            )}
+            ×
+            ${item.cantidad}
+          </span>
+
+          <strong>
+            $${subtotal.toLocaleString()}
+          </strong>
+
+        </div>
+
+      `;
+
+    }
+  );
+
+
+  html += `
+
+    <div style="
+      display:flex;
+      justify-content:space-between;
+      padding-top:15px;
+      font-size:20px;
+      font-weight:bold;">
+
+      <span>
+        Total
+      </span>
+
+      <span>
+        $${total.toLocaleString()}
+        MXN
+      </span>
+
+    </div>
+
+  `;
+
+
+  resumen.innerHTML =
+    html;
+
+
+  document.getElementById(
+    "checkout"
+  ).style.display =
     "block";
 
 
-  setTimeout(
-    () => {
+  cerrarCarrito();
 
-      toast.style.display =
-        "none";
+}
 
-    },
-    2500
+
+/* =========================================================
+   CERRAR CHECKOUT
+========================================================= */
+
+function cerrarCheckout(){
+
+  document.getElementById(
+    "checkout"
+  ).style.display =
+    "none";
+
+}
+
+
+/* =========================================================
+   ENVIAR PEDIDO
+========================================================= */
+
+function enviarPedido(
+  e
+){
+
+  e.preventDefault();
+
+
+  const nombre =
+    document.getElementById(
+      "cliente"
+    ).value;
+
+
+  const telefono =
+    document.getElementById(
+      "telefono"
+    ).value;
+
+
+  const observaciones =
+    document.getElementById(
+      "observaciones"
+    ).value;
+
+
+  let mensaje =
+    "Hola, quiero realizar el siguiente pedido:\n\n";
+
+
+  let total = 0;
+
+
+  carrito.forEach(
+    item => {
+
+      const precio =
+        Number(
+          item.precio || 0
+        );
+
+
+      const subtotal =
+        precio *
+        Number(
+          item.cantidad
+        );
+
+
+      total +=
+        subtotal;
+
+
+      mensaje +=
+        "• " +
+        item.nombre +
+        " | Cantidad: " +
+        item.cantidad +
+        " | Precio: $" +
+        precio +
+        " | Subtotal: $" +
+        subtotal +
+        "\n";
+
+    }
+  );
+
+
+  mensaje +=
+    "\nTotal aproximado: $" +
+    total +
+    " MXN";
+
+
+  mensaje +=
+    "\n\nNombre: " +
+    nombre;
+
+
+  mensaje +=
+    "\nTeléfono: " +
+    telefono;
+
+
+  if(observaciones){
+
+    mensaje +=
+      "\nObservaciones: " +
+      observaciones;
+
+  }
+
+
+  window.open(
+
+    "https://wa.me/" +
+    WHATSAPP +
+    "?text=" +
+    encodeURIComponent(
+      mensaje
+    ),
+
+    "_blank"
+
   );
 
 }
 
 
 /* =========================================================
-   INICIAR
+   CERRAR MODALES AL HACER CLIC AFUERA
 ========================================================= */
 
-comprobarSesion();
+window.addEventListener(
+  "click",
+  e => {
+
+    const modal =
+      document.getElementById(
+        "modalProducto"
+      );
+
+
+    if(e.target === modal){
+
+      cerrarProducto();
+
+    }
+
+
+    const checkout =
+      document.getElementById(
+        "checkout"
+      );
+
+
+    if(e.target === checkout){
+
+      cerrarCheckout();
+
+    }
+
+  }
+);
+
+
+/* =========================================================
+   INICIO
+========================================================= */
+
+mostrarCategorias();
+
+mostrarProductos();
+
+actualizarCarrito();
+
+
+/* =========================================================
+   SERVICE WORKER
+========================================================= */
+
+if(
+  "serviceWorker" in navigator
+){
+
+  window.addEventListener(
+    "load",
+    () => {
+
+      navigator.serviceWorker
+        .register(
+          "./sw.js"
+        )
+        .then(
+          r =>
+            console.log(
+              "Service Worker registrado:",
+              r.scope
+            )
+        )
+        .catch(
+          e =>
+            console.error(
+              "Error Service Worker:",
+              e
+            )
+        );
+
+    }
+  );
+
+}
 
 </script>
 
