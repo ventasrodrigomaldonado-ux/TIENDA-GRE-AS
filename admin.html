@@ -1348,33 +1348,12 @@ body{
               Seleccionar categoría
             </option>
 
-            <option value="Sneakers">
-              Sneakers
-            </option>
-
-            <option value="T-Shirts">
-              T-Shirts
-            </option>
-
-            <option value="Caps">
-              Caps
-            </option>
-
-            <option value="Bags">
-              Bags
-            </option>
-
-            <option value="Accessories">
-              Accessories
-            </option>
-
-            <option value="Featured">
-              Featured
-            </option>
-
-            <option value="New Arrivals">
-              New Arrivals
-            </option>
+            <option value="Tenis para dama">Tenis para dama</option>
+            <option value="Tenis para hombre">Tenis para hombre</option>
+            <option value="Tenis para niños">Tenis para niños</option>
+            <option value="Playeras">Playeras</option>
+            <option value="Gorras">Gorras</option>
+            <option value="Accesorios">Accesorios</option>
 
           </select>
 
@@ -1426,7 +1405,7 @@ body{
         id="accesoriosExtra">
 
         <h3>
-          ACCESSORIES
+          DETALLES DE ACCESORIOS
         </h3>
 
 
@@ -1569,1241 +1548,305 @@ body{
 
 
 <script>
-
-
 /* =========================================================
-   SUPABASE
+   TROPIC DISTRICT · ADMINISTRADOR CON SUPABASE
 ========================================================= */
-
-/*
-  IMPORTANTE:
-
-  AQUÍ PONDREMOS DESPUÉS LAS CREDENCIALES
-  EXCLUSIVAS DE TROPIC DISTRICT.
-
-  NO UTILIZAR LAS DE RUSTI-K.
-*/
-
-const SUPABASE_URL =
-  "";
-
-const SUPABASE_ANON_KEY =
-  "";
-
-
-let supabaseClient = null;
-
-
-if(
-  SUPABASE_URL &&
-  SUPABASE_ANON_KEY
-){
-
-  supabaseClient =
-    window.supabase.createClient(
-      SUPABASE_URL,
-      SUPABASE_ANON_KEY
-    );
-
-}
-
-
-/* =========================================================
-   VARIABLES
-========================================================= */
-
+const SUPABASE_URL = "https://kieedhsfjlaseyfhckdd.supabase.co";
+const SUPABASE_ANON_KEY = "sb_publishable_Cssg1pWMHqDVUhZdczsA9g_bbs8nbUK";
+const ADMIN_UID = "bd555dc4-ba93-4180-8b41-55c2e6a1d84f";
+const TABLA = "tropic_products";
+const BUCKET = "tropic-products";
+const CATEGORIAS = ["Tenis para dama", "Tenis para hombre", "Tenis para niños", "Playeras", "Gorras", "Accesorios"];
+const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 let productos = [];
-
 let productoEditando = null;
+let guardando = false;
 
+const $ = id => document.getElementById(id);
+const escapar = valor => String(valor ?? "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;", "'":"&#39;"}[c]));
+const dinero = valor => Number(valor || 0).toLocaleString("es-MX", {style:"currency", currency:"MXN", maximumFractionDigits:2});
 
-/* =========================================================
-   LOGIN
-========================================================= */
-
-async function iniciarSesion(e){
-
+async function iniciarSesion(e) {
   e.preventDefault();
+  ocultarErrorLogin();
+  const email = $("email").value.trim();
+  const password = $("password").value;
+  const boton = document.querySelector(".btn-login");
+  boton.disabled = true;
+  boton.textContent = "VERIFICANDO...";
+  try {
+    const { data, error } = await supabaseClient.auth.signInWithPassword({ email, password });
+    if (error) throw error;
+    if (data.user?.id !== ADMIN_UID) {
+      await supabaseClient.auth.signOut();
+      throw new Error("Esta cuenta no tiene autorización para administrar Tropic District.");
+    }
+    await mostrarAdmin();
+  } catch (error) {
+    mostrarErrorLogin(error.message || "No se pudo iniciar sesión.");
+  } finally {
+    boton.disabled = false;
+    boton.textContent = "ENTRAR AL ADMINISTRADOR";
+  }
+}
 
+function mostrarErrorLogin(mensaje) {
+  $("loginError").textContent = mensaje;
+  $("loginError").style.display = "block";
+}
+function ocultarErrorLogin() { $("loginError").style.display = "none"; }
 
-  if(!supabaseClient){
-
-    mostrarErrorLogin(
-      "Primero debemos conectar la base de datos de Tropic District."
-    );
-
+async function mostrarAdmin() {
+  const { data: { user }, error } = await supabaseClient.auth.getUser();
+  if (error || !user || user.id !== ADMIN_UID) {
+    await supabaseClient.auth.signOut();
+    $("admin").style.display = "none";
+    $("login").style.display = "flex";
+    if (user) mostrarErrorLogin("Esta cuenta no tiene permisos de administrador.");
     return;
-
   }
-
-
-  const email =
-    document.getElementById(
-      "email"
-    ).value.trim();
-
-
-  const password =
-    document.getElementById(
-      "password"
-    ).value;
-
-
-  const {
-    error
-  } =
-    await supabaseClient
-      .auth
-      .signInWithPassword({
-
-        email,
-        password
-
-      });
-
-
-  if(error){
-
-    mostrarErrorLogin(
-      error.message
-    );
-
-    return;
-
-  }
-
-
-  mostrarAdmin();
-
+  $("login").style.display = "none";
+  $("admin").style.display = "block";
+  await cargarProductos();
 }
 
-
-/* =========================================================
-   ERROR LOGIN
-========================================================= */
-
-function mostrarErrorLogin(
-  mensaje
-){
-
-  const caja =
-    document.getElementById(
-      "loginError"
-    );
-
-
-  caja.textContent =
-    mensaje;
-
-
-  caja.style.display =
-    "block";
-
-}
-
-
-/* =========================================================
-   MOSTRAR ADMIN
-========================================================= */
-
-function mostrarAdmin(){
-
-  document.getElementById(
-    "login"
-  ).style.display =
-    "none";
-
-
-  document.getElementById(
-    "admin"
-  ).style.display =
-    "block";
-
-
-  cargarProductos();
-
-}
-
-
-/* =========================================================
-   CERRAR SESION
-========================================================= */
-
-async function cerrarSesion(){
-
-  if(supabaseClient){
-
-    await supabaseClient
-      .auth
-      .signOut();
-
-  }
-
-
+async function cerrarSesion() {
+  await supabaseClient.auth.signOut();
   location.reload();
-
 }
 
-
-/* =========================================================
-   COMPROBAR SESION
-========================================================= */
-
-async function comprobarSesion(){
-
-  if(!supabaseClient){
-
-    return;
-
+async function comprobarSesion() {
+  try {
+    const { data: { session } } = await supabaseClient.auth.getSession();
+    if (session) await mostrarAdmin();
+  } catch (error) {
+    console.error("Error comprobando sesión:", error);
   }
-
-
-  const {
-    data
-  } =
-    await supabaseClient
-      .auth
-      .getSession();
-
-
-  if(
-    data &&
-    data.session
-  ){
-
-    mostrarAdmin();
-
-  }
-
 }
 
-
-/* =========================================================
-   CARGAR PRODUCTOS
-========================================================= */
-
-async function cargarProductos(){
-
-  if(!supabaseClient){
-
+async function cargarProductos() {
+  $("listaProductos").innerHTML = '<div class="item"><div class="item-info"><h3>Cargando productos...</h3></div></div>';
+  const { data, error } = await supabaseClient.from(TABLA).select("*").order("created_at", { ascending: false });
+  if (error) {
+    console.error(error);
+    $("listaProductos").innerHTML = '<div class="item"><div class="item-info"><h3>No se pudieron cargar los productos</h3><p>Revisa la conexión, la tabla y los permisos de Supabase.</p></div></div>';
+    mostrarToast("Error cargando productos: " + error.message);
     return;
-
   }
-
-
-  const {
-    data,
-    error
-  } =
-    await supabaseClient
-      .from(
-        "tropic_products"
-      )
-      .select("*")
-      .order(
-        "id",
-        {
-          ascending:true
-        }
-      );
-
-
-  if(error){
-
-    mostrarToast(
-      "Error cargando productos."
-    );
-
-    console.error(
-      error
-    );
-
-    return;
-
-  }
-
-
-  productos =
-    data || [];
-
-
+  productos = data || [];
   mostrarLista();
-
   actualizarEstadisticas();
-
 }
 
-
-/* =========================================================
-   LISTA
-========================================================= */
-
-function mostrarLista(
-  lista = productos
-){
-
-  const contenedor =
-    document.getElementById(
-      "listaProductos"
-    );
-
-
-  contenedor.innerHTML =
-    "";
-
-
-  if(!lista.length){
-
-    contenedor.innerHTML = `
-
-      <div class="item">
-
-        <div class="item-info">
-
-          <h3>
-            No hay productos todavía
-          </h3>
-
-          <p>
-            Agrega tu primer producto.
-          </p>
-
-        </div>
-
+function mostrarLista(lista = productos) {
+  const contenedor = $("listaProductos");
+  contenedor.innerHTML = "";
+  if (!lista.length) {
+    contenedor.innerHTML = '<div class="item"><div class="item-info"><h3>No hay productos todavía</h3><p>Agrega tu primer producto.</p></div></div>';
+    return;
+  }
+  lista.forEach(p => {
+    const div = document.createElement("div");
+    div.className = "item";
+    const img = p.image_url ? `<img class="item-imagen" src="${escapar(p.image_url)}" alt="${escapar(p.name)}">` : '<div class="item-imagen"></div>';
+    div.innerHTML = `${img}
+      <div class="item-info">
+        <span class="item-categoria">${escapar(p.category || "Sin categoría")}</span>
+        <h3>${escapar(p.name)}</h3>
+        <p>${escapar(p.brand || "")}${p.active ? "" : " · INACTIVO"}</p>
+        <div class="item-precio">${dinero(p.price)} MXN</div>
       </div>
-
-    `;
-
-    return;
-
-  }
-
-
-  lista.forEach(
-    producto => {
-
-      const div =
-        document.createElement(
-          "div"
-        );
-
-
-      div.className =
-        "item";
-
-
-      const imagen =
-        producto.imagen ||
-        "";
-
-
-      div.innerHTML = `
-
-        ${
-          imagen
-          ?
-          `<img
-            class="item-imagen"
-            src="${imagen}"
-            alt="${producto.nombre || ""}">`
-          :
-          `<div
-            class="item-imagen">
-          </div>`
-        }
-
-
-        <div class="item-info">
-
-          <span class="item-categoria">
-
-            ${producto.categoria || ""}
-
-          </span>
-
-
-          <h3>
-
-            ${producto.nombre || ""}
-
-          </h3>
-
-
-          <p>
-
-            ${producto.marca || ""}
-
-          </p>
-
-
-          <div class="item-precio">
-
-            $${Number(
-              producto.precio || 0
-            ).toLocaleString()}
-            MXN
-
-          </div>
-
-        </div>
-
-
-        <div class="item-acciones">
-
-          <button
-            class="btn-editar"
-            onclick="editarProducto(${producto.id})">
-
-            EDITAR
-
-          </button>
-
-
-          <button
-            class="btn-estado ${
-              producto.activo
-              ? ""
-              : "inactivo"
-            }"
-            onclick="cambiarEstado(${producto.id},${producto.activo})">
-
-            ${
-              producto.activo
-              ?
-              "DESACTIVAR"
-              :
-              "ACTIVAR"
-            }
-
-          </button>
-
-
-          <button
-            class="btn-eliminar"
-            onclick="eliminarProducto(${producto.id})">
-
-            ELIMINAR
-
-          </button>
-
-        </div>
-
-      `;
-
-
-      contenedor.appendChild(
-        div
-      );
-
-    }
-  );
-
+      <div class="item-acciones">
+        <button class="btn-editar" data-action="editar" data-id="${escapar(p.id)}">EDITAR</button>
+        <button class="btn-estado ${p.active ? "" : "inactivo"}" data-action="estado" data-id="${escapar(p.id)}">${p.active ? "DESACTIVAR" : "ACTIVAR"}</button>
+        <button class="btn-eliminar" data-action="eliminar" data-id="${escapar(p.id)}">ELIMINAR</button>
+      </div>`;
+    contenedor.appendChild(div);
+  });
 }
 
+$("listaProductos").addEventListener("click", e => {
+  const boton = e.target.closest("button[data-action]");
+  if (!boton) return;
+  const p = productos.find(item => String(item.id) === String(boton.dataset.id));
+  if (!p) return;
+  if (boton.dataset.action === "editar") editarProducto(p.id);
+  if (boton.dataset.action === "estado") cambiarEstado(p.id, p.active);
+  if (boton.dataset.action === "eliminar") eliminarProducto(p.id);
+});
 
-/* =========================================================
-   ESTADISTICAS
-========================================================= */
-
-function actualizarEstadisticas(){
-
-  document.getElementById(
-    "totalProductos"
-  ).textContent =
-    productos.length;
-
-
-  document.getElementById(
-    "productosActivos"
-  ).textContent =
-    productos.filter(
-      p =>
-        p.activo
-    ).length;
-
-
-  const categorias =
-    new Set(
-      productos
-        .map(
-          p =>
-            p.categoria
-        )
-        .filter(Boolean)
-    );
-
-
-  document.getElementById(
-    "totalCategorias"
-  ).textContent =
-    categorias.size;
-
+function actualizarEstadisticas() {
+  $("totalProductos").textContent = productos.length;
+  $("productosActivos").textContent = productos.filter(p => p.active).length;
+  $("totalCategorias").textContent = new Set(productos.map(p => p.category).filter(Boolean)).size;
 }
 
-
-/* =========================================================
-   BUSCAR
-========================================================= */
-
-function filtrarProductos(){
-
-  const texto =
-    document.getElementById(
-      "busqueda"
-    ).value
-      .toLowerCase()
-      .trim();
-
-
-  if(!texto){
-
-    mostrarLista();
-
-    return;
-
-  }
-
-
-  const filtrados =
-    productos.filter(
-      p =>
-
-        String(
-          p.nombre || ""
-        )
-        .toLowerCase()
-        .includes(texto)
-
-        ||
-
-        String(
-          p.marca || ""
-        )
-        .toLowerCase()
-        .includes(texto)
-
-        ||
-
-        String(
-          p.categoria || ""
-        )
-        .toLowerCase()
-        .includes(texto)
-
-    );
-
-
-  mostrarLista(
-    filtrados
-  );
-
+function filtrarProductos() {
+  const texto = $("busqueda").value.toLowerCase().trim();
+  if (!texto) return mostrarLista();
+  mostrarLista(productos.filter(p => [p.name, p.brand, p.category, p.description].some(v => String(v || "").toLowerCase().includes(texto))));
 }
 
-
-/* =========================================================
-   NUEVO PRODUCTO
-========================================================= */
-
-function abrirNuevoProducto(){
-
-  productoEditando =
-    null;
-
-
-  document.getElementById(
-    "modalTitulo"
-  ).textContent =
-    "Nuevo producto";
-
-
-  document.getElementById(
-    "formProducto"
-  ).reset();
-
-
-  document.getElementById(
-    "fotoPreview"
-  ).style.display =
-    "none";
-
-
-  document.getElementById(
-    "fotoPreview"
-  ).src =
-    "";
-
-
+function abrirNuevoProducto() {
+  productoEditando = null;
+  $("modalTitulo").textContent = "Nuevo producto";
+  $("formProducto").reset();
+  $("fotoPreview").style.display = "none";
+  $("fotoPreview").src = "";
+  $("foto").value = "";
   cambiarCategoria();
-
-
-  document.getElementById(
-    "modalProducto"
-  ).style.display =
-    "block";
-
+  $("modalProducto").style.display = "block";
 }
 
-
-/* =========================================================
-   EDITAR PRODUCTO
-========================================================= */
-
-function editarProducto(
-  id
-){
-
-  const producto =
-    productos.find(
-      p =>
-        Number(p.id) ===
-        Number(id)
-    );
-
-
-  if(!producto){
-
-    return;
-
+function editarProducto(id) {
+  const p = productos.find(item => String(item.id) === String(id));
+  if (!p) return;
+  productoEditando = p;
+  $("modalTitulo").textContent = "Editar producto";
+  $("nombre").value = p.name || "";
+  $("marca").value = p.brand || "";
+  $("categoria").value = p.category || "";
+  $("precio").value = p.price ?? "";
+  $("descripcion").value = p.description || "";
+  $("tipo").value = p.accessory_type || "";
+  $("material").value = p.material || "";
+  $("foto").value = "";
+  if (p.image_url) {
+    $("fotoPreview").src = p.image_url;
+    $("fotoPreview").style.display = "block";
+  } else {
+    $("fotoPreview").src = "";
+    $("fotoPreview").style.display = "none";
   }
-
-
-  productoEditando =
-    producto;
-
-
-  document.getElementById(
-    "modalTitulo"
-  ).textContent =
-    "Editar producto";
-
-
-  document.getElementById(
-    "nombre"
-  ).value =
-    producto.nombre ||
-    "";
-
-
-  document.getElementById(
-    "marca"
-  ).value =
-    producto.marca ||
-    "";
-
-
-  document.getElementById(
-    "categoria"
-  ).value =
-    producto.categoria ||
-    "";
-
-
-  document.getElementById(
-    "precio"
-  ).value =
-    producto.precio ||
-    "";
-
-
-  document.getElementById(
-    "descripcion"
-  ).value =
-    producto.descripcion ||
-    "";
-
-
-  document.getElementById(
-    "tipo"
-  ).value =
-    producto.tipo ||
-    "";
-
-
-  document.getElementById(
-    "material"
-  ).value =
-    producto.material ||
-    "";
-
-
-  if(producto.imagen){
-
-    document.getElementById(
-      "fotoPreview"
-    ).src =
-      producto.imagen;
-
-
-    document.getElementById(
-      "fotoPreview"
-    ).style.display =
-      "block";
-
-  }
-
-
   cambiarCategoria();
-
-
-  document.getElementById(
-    "modalProducto"
-  ).style.display =
-    "block";
-
+  $("modalProducto").style.display = "block";
 }
 
-
-/* =========================================================
-   CATEGORIA
-========================================================= */
-
-function cambiarCategoria(){
-
-  const categoria =
-    document.getElementById(
-      "categoria"
-    ).value;
-
-
-  const extras =
-    document.getElementById(
-      "accesoriosExtra"
-    );
-
-
-  if(
-    categoria ===
-    "Accessories"
-  ){
-
-    extras.style.display =
-      "block";
-
-  }else{
-
-    extras.style.display =
-      "none";
-
-  }
-
+function cambiarCategoria() {
+  $("accesoriosExtra").style.display = $("categoria").value === "Accesorios" ? "block" : "none";
 }
 
-
-/* =========================================================
-   PREVISUALIZAR FOTO
-========================================================= */
-
-function previsualizarFoto(){
-
-  const archivo =
-    document.getElementById(
-      "foto"
-    ).files[0];
-
-
-  if(!archivo){
-
+function previsualizarFoto() {
+  const archivo = $("foto").files[0];
+  if (!archivo) return;
+  if (!archivo.type.startsWith("image/")) {
+    mostrarToast("Selecciona un archivo de imagen válido.");
+    $("foto").value = "";
     return;
-
   }
-
-
-  const url =
-    URL.createObjectURL(
-      archivo
-    );
-
-
-  const preview =
-    document.getElementById(
-      "fotoPreview"
-    );
-
-
-  preview.src =
-    url;
-
-
-  preview.style.display =
-    "block";
-
+  const preview = $("fotoPreview");
+  if (preview.dataset.objectUrl) URL.revokeObjectURL(preview.dataset.objectUrl);
+  const url = URL.createObjectURL(archivo);
+  preview.dataset.objectUrl = url;
+  preview.src = url;
+  preview.style.display = "block";
 }
 
-
-/* =========================================================
-   SUBIR IMAGEN
-========================================================= */
-
-async function subirImagen(
-  archivo
-){
-
-  if(!archivo){
-
-    return null;
-
-  }
-
-
-  const extension =
-    archivo.name
-      .split(".")
-      .pop()
-      .toLowerCase();
-
-
-  const nombreSeguro =
-
-    "producto-" +
-
-    Date.now() +
-
-    "-" +
-
-    Math.random()
-      .toString(36)
-      .substring(2,8) +
-
-    "." +
-
-    extension;
-
-
-  const ruta =
-    nombreSeguro;
-
-
-  const {
-    error
-  } =
-    await supabaseClient
-      .storage
-      .from(
-        "tropic-products"
-      )
-      .upload(
-        ruta,
-        archivo,
-        {
-
-          cacheControl:
-            "3600",
-
-          upsert:false
-
-        }
-      );
-
-
-  if(error){
-
-    throw error;
-
-  }
-
-
-  const {
-    data
-  } =
-    supabaseClient
-      .storage
-      .from(
-        "tropic-products"
-      )
-      .getPublicUrl(
-        ruta
-      );
-
-
-  return data.publicUrl;
-
+async function subirImagen(archivo) {
+  if (!archivo) return null;
+  if (!archivo.type.startsWith("image/")) throw new Error("El archivo seleccionado no es una imagen.");
+  const extension = (archivo.name.split(".").pop() || "jpg").toLowerCase().replace(/[^a-z0-9]/g, "") || "jpg";
+  const ruta = `productos/${Date.now()}-${crypto.randomUUID()}.${extension}`;
+  const { error } = await supabaseClient.storage.from(BUCKET).upload(ruta, archivo, { cacheControl: "3600", upsert: false, contentType: archivo.type });
+  if (error) throw error;
+  const { data } = supabaseClient.storage.from(BUCKET).getPublicUrl(ruta);
+  return { url: data.publicUrl, path: ruta };
 }
 
-
-/* =========================================================
-   GUARDAR PRODUCTO
-========================================================= */
-
-async function guardarProducto(
-  e
-){
-
+async function guardarProducto(e) {
   e.preventDefault();
+  if (guardando) return;
+  guardando = true;
+  const boton = document.querySelector(".btn-guardar");
+  const textoOriginal = boton.textContent;
+  boton.disabled = true;
+  boton.textContent = "GUARDANDO...";
+  try {
+    const nombre = $("nombre").value.trim();
+    const marca = $("marca").value.trim();
+    const categoria = $("categoria").value;
+    const precio = Number($("precio").value);
+    const descripcion = $("descripcion").value.trim();
+    const tipo = $("tipo").value;
+    const material = $("material").value.trim();
+    const archivo = $("foto").files[0];
+    if (!nombre || !categoria || !Number.isFinite(precio) || precio < 0) throw new Error("Revisa el nombre, la categoría y el precio.");
 
-
-  if(!supabaseClient){
-
-    mostrarToast(
-      "Primero debemos conectar Supabase."
-    );
-
-    return;
-
-  }
-
-
-  const nombre =
-    document.getElementById(
-      "nombre"
-    ).value.trim();
-
-
-  const marca =
-    document.getElementById(
-      "marca"
-    ).value.trim();
-
-
-  const categoria =
-    document.getElementById(
-      "categoria"
-    ).value;
-
-
-  const precio =
-    Number(
-      document.getElementById(
-        "precio"
-      ).value
-    );
-
-
-  const descripcion =
-    document.getElementById(
-      "descripcion"
-    ).value.trim();
-
-
-  const tipo =
-    document.getElementById(
-      "tipo"
-    ).value;
-
-
-  const material =
-    document.getElementById(
-      "material"
-    ).value.trim();
-
-
-  const archivo =
-    document.getElementById(
-      "foto"
-    ).files[0];
-
-
-  let imagen =
-    productoEditando
-      ? productoEditando.imagen || null
-      : null;
-
-
-  try{
-
-
-    if(archivo){
-
-      imagen =
-        await subirImagen(
-          archivo
-        );
-
+    let imageUrl = productoEditando?.image_url || null;
+    let imagePath = productoEditando?.image_path || null;
+    if (archivo) {
+      const imagen = await subirImagen(archivo);
+      imageUrl = imagen.url;
+      imagePath = imagen.path;
     }
-
 
     const datos = {
-
-      nombre,
-
-      marca,
-
-      categoria,
-
-      precio,
-
-      descripcion,
-
-      imagen,
-
-      tipo:
-        categoria ===
-        "Accessories"
-        ? tipo
-        : null,
-
-      material:
-        categoria ===
-        "Accessories"
-        ? material
-        : null,
-
-      activo:
-        productoEditando
-        ? productoEditando.activo
-        : true
-
+      name: nombre,
+      brand: marca || null,
+      category: categoria,
+      price: precio,
+      description: descripcion || null,
+      image_url: imageUrl,
+      image_path: imagePath,
+      accessory_type: categoria === "Accesorios" ? (tipo || null) : null,
+      material: categoria === "Accesorios" ? (material || null) : null,
+      active: productoEditando ? productoEditando.active : true,
+      updated_at: new Date().toISOString()
     };
 
-
-    if(productoEditando){
-
-      const {
-        error
-      } =
-        await supabaseClient
-          .from(
-            "tropic_products"
-          )
-          .update(
-            datos
-          )
-          .eq(
-            "id",
-            productoEditando.id
-          );
-
-
-      if(error){
-
-        throw error;
-
-      }
-
-
-      mostrarToast(
-        "Producto actualizado ✓"
-      );
-
-    }else{
-
-      const {
-        error
-      } =
-        await supabaseClient
-          .from(
-            "tropic_products"
-          )
-          .insert(
-            [datos]
-          );
-
-
-      if(error){
-
-        throw error;
-
-      }
-
-
-      mostrarToast(
-        "Producto agregado ✓"
-      );
-
+    let error;
+    if (productoEditando) {
+      ({ error } = await supabaseClient.from(TABLA).update(datos).eq("id", productoEditando.id));
+    } else {
+      ({ error } = await supabaseClient.from(TABLA).insert(datos));
     }
-
-
+    if (error) throw error;
     cerrarModal();
-
-    cargarProductos();
-
-
+    mostrarToast(productoEditando ? "Producto actualizado ✓" : "Producto agregado ✓");
+    await cargarProductos();
+  } catch (error) {
+    console.error(error);
+    mostrarToast("No se pudo guardar: " + (error.message || "Error desconocido"));
+  } finally {
+    guardando = false;
+    boton.disabled = false;
+    boton.textContent = textoOriginal;
   }
-  catch(error){
-
-    console.error(
-      error
-    );
-
-
-    mostrarToast(
-      "No se pudo guardar el producto."
-    );
-
-  }
-
 }
 
-
-/* =========================================================
-   CAMBIAR ESTADO
-========================================================= */
-
-async function cambiarEstado(
-  id,
-  estadoActual
-){
-
-  if(!supabaseClient){
-
-    return;
-
-  }
-
-
-  const {
-    error
-  } =
-    await supabaseClient
-      .from(
-        "tropic_products"
-      )
-      .update({
-
-        activo:
-          !estadoActual
-
-      })
-      .eq(
-        "id",
-        id
-      );
-
-
-  if(error){
-
-    mostrarToast(
-      "No se pudo cambiar el estado."
-    );
-
-    return;
-
-  }
-
-
-  mostrarToast(
-    estadoActual
-    ?
-    "Producto desactivado"
-    :
-    "Producto activado"
-  );
-
-
-  cargarProductos();
-
+async function cambiarEstado(id, estadoActual) {
+  const { error } = await supabaseClient.from(TABLA).update({ active: !estadoActual, updated_at: new Date().toISOString() }).eq("id", id);
+  if (error) { console.error(error); mostrarToast("No se pudo cambiar el estado: " + error.message); return; }
+  mostrarToast(estadoActual ? "Producto desactivado" : "Producto activado");
+  await cargarProductos();
 }
 
-
-/* =========================================================
-   ELIMINAR
-========================================================= */
-
-async function eliminarProducto(
-  id
-){
-
-  if(
-    !confirm(
-      "¿Seguro que deseas eliminar este producto?"
-    )
-  ){
-
-    return;
-
-  }
-
-
-  if(!supabaseClient){
-
-    return;
-
-  }
-
-
-  const {
-    error
-  } =
-    await supabaseClient
-      .from(
-        "tropic_products"
-      )
-      .delete()
-      .eq(
-        "id",
-        id
-      );
-
-
-  if(error){
-
-    mostrarToast(
-      "No se pudo eliminar."
-    );
-
-    return;
-
-  }
-
-
-  mostrarToast(
-    "Producto eliminado"
-  );
-
-
-  cargarProductos();
-
+async function eliminarProducto(id) {
+  const p = productos.find(item => String(item.id) === String(id));
+  if (!p || !confirm(`¿Seguro que deseas eliminar “${p.name}”? Esta acción no se puede deshacer.`)) return;
+  const { error } = await supabaseClient.from(TABLA).delete().eq("id", id);
+  if (error) { console.error(error); mostrarToast("No se pudo eliminar: " + error.message); return; }
+  // Se elimina el registro; la imagen en Storage se conserva por seguridad.
+  mostrarToast("Producto eliminado");
+  await cargarProductos();
 }
 
-
-/* =========================================================
-   CERRAR MODAL
-========================================================= */
-
-function cerrarModal(){
-
-  document.getElementById(
-    "modalProducto"
-  ).style.display =
-    "none";
-
-
-  productoEditando =
-    null;
-
+function cerrarModal() {
+  $("modalProducto").style.display = "none";
+  productoEditando = null;
 }
 
-
-/* =========================================================
-   TOAST
-========================================================= */
-
-function mostrarToast(
-  mensaje
-){
-
-  const toast =
-    document.getElementById(
-      "toast"
-    );
-
-
-  toast.textContent =
-    mensaje;
-
-
-  toast.style.display =
-    "block";
-
-
-  setTimeout(
-    () => {
-
-      toast.style.display =
-        "none";
-
-    },
-    2500
-  );
-
+function mostrarToast(mensaje) {
+  const toast = $("toast");
+  toast.textContent = mensaje;
+  toast.style.display = "block";
+  clearTimeout(mostrarToast.timer);
+  mostrarToast.timer = setTimeout(() => { toast.style.display = "none"; }, 3500);
 }
 
-
-/* =========================================================
-   INICIAR
-========================================================= */
-
+// Cerrar modal si se hace clic en el fondo oscuro.
+$("modalProducto").addEventListener("click", e => { if (e.target === $("modalProducto")) cerrarModal(); });
 comprobarSesion();
-
 </script>
 
 </body>
