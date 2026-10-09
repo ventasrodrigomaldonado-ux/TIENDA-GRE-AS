@@ -239,7 +239,7 @@ async function cargarProductos() {
 
   try {
     const respuesta = await fetch(
-      `${SUPABASE_URL}/rest/v1/${TABLA_PRODUCTOS}?select=id,name,brand,category,price,description,image_url,image_path,accessory_type,material,active,department,product_type,stock,sizes,colors,variants,images,created_at&active=eq.true&order=created_at.desc`,
+      `${SUPABASE_URL}/rest/v1/${TABLA_PRODUCTOS}?select=id,name,brand,category,price,description,image_url,image_path,accessory_type,material,active,department,product_type,stock,sizes,colors,variants,images,featured,created_at&active=eq.true&featured=eq.true&order=created_at.desc`,
       {
         method: "GET",
         headers: {
@@ -322,7 +322,7 @@ function mostrarProductos(lista = productos) {
     contenedor.innerHTML = `
       <div class="vacio">
         <h3>Próximamente</h3>
-        <p>Estamos preparando nuevos productos para Tropic District.</p>
+        <p>Estamos preparando nuestra selección de destacados. Explora Hombres, Mujeres y Niños para ver todo el catálogo.</p>
       </div>
     `;
     return;
